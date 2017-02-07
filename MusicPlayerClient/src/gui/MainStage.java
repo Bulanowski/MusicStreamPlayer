@@ -65,6 +65,8 @@ public class MainStage extends Application {
 		bp.setTop(TheMenuBar.get());
 		bp.setBottom(statusBar);
 		primaryStage.setScene(new Scene(bp,1000,800));
+		primaryStage.setMinHeight(200);
+		primaryStage.setMinWidth(400);
 		primaryStage.show();
 	}
 	

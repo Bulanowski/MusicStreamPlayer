@@ -9,13 +9,11 @@ import java.util.ArrayList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import model.Album;
-import model.Artist;
 import model.Song;
+import model.SongModel;
 
 public class TCPDAO {
-	private ArrayList<Artist> artistsDataObjArr;
-	private ArrayList<Song> songs;
+	private SongModel songModel;
 
 	public void connect(String ip) throws Exception {
 		try {
@@ -24,19 +22,11 @@ public class TCPDAO {
 			ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
 			outToServer.writeObject("send");
 
-			artistsDataObjArr = (ArrayList<Artist>) inFromServer.readObject();
-			songs = new ArrayList<Song>();
+			ArrayList<Song> songs = (ArrayList<Song>) inFromServer.readObject();
+			
+			songModel = new SongModel(songs);
 
 			System.out.println("Got Object");
-			for (Artist item : artistsDataObjArr) {
-				for (Album album : item.getAlbumList()) {
-					for (Song song : album.getSongList()) {
-						song.setArtist(item.getName());
-						song.setAlbum(album.getName());
-						songs.add(song);
-					}
-				}
-			}
 
 			clientSocket.close();
 		} catch (ConnectException ex) {
@@ -45,11 +35,7 @@ public class TCPDAO {
 		} // End Try
 	}
 
-	public ArrayList<Artist> getArtists() {
-		return artistsDataObjArr;
-	}
-
-	public ArrayList<Song> getSongs() {
-		return songs;
+	public SongModel getSongModel() {
+		return songModel;
 	}
 }

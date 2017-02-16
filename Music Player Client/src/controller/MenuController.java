@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import model.SongModel;
 import view.MenuView;
 import view.PrimaryView;
 
@@ -42,12 +43,12 @@ public class MenuController {
 					@Override
 					public void handle(ActionEvent event) {
 						try {
-							tcpCtrl.connect(ipField.getText());
+							SongModel songModel = tcpCtrl.requestSongs(ipField.getText());
 							stage.close();
 							Thread.sleep(1000);
-							treeCtrl.updateArtists(tcpCtrl.getArtistModel());
-							tableCtrl.updateSongs(tcpCtrl.getSongModel());
-							statusCtrl.updateCount(tcpCtrl.getSongModel());
+//							treeCtrl.updateArtists(songModel);
+							tableCtrl.updateSongs(songModel);
+							statusCtrl.updateCount(songModel);
 
 						} catch (Exception e) {
 							// TODO Auto-generated catch block

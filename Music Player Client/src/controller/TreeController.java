@@ -1,37 +1,34 @@
 package controller;
 
-import javafx.scene.control.TreeItem;
+import java.util.HashMap;
+import java.util.TreeSet;
+
 import javafx.scene.control.TreeView;
-import model.Album;
-import model.Artist;
-import model.ArtistModel;
+import model.Song;
+import model.SongModel;
+import view.MediaTreeView;
 import view.PrimaryView;
 
 public class TreeController {
-	private PrimaryView pv;
-	private TreeItem<String> rootNode;
-
+	private HashMap<String, TreeSet<String>> mediaList;
+	private MediaTreeView mtv;
+	
 	public TreeController(PrimaryView primaryView) {
-		this.pv = primaryView;
-		rootNode = new TreeItem<String>("Artists");
-		rootNode.setExpanded(true);
-
-		TreeView<String> tv = new TreeView<>(rootNode);
-
-		pv.setLeft(tv);
-
-		tv.prefWidthProperty().bind(pv.getLeftWidth());
+		mtv = new MediaTreeView();
+		
+		primaryView.setLeft(mtv.getNode());
+		((TreeView<String>) mtv.getNode()).prefWidthProperty().bind(primaryView.getLeftWidth());
 	}
-
-	public void updateArtists(ArtistModel artistModel) {
-		for (Artist artist : artistModel.getArtists()) {
-			TreeItem<String> artistItem = new TreeItem<String>(artist.getName());
-			for (Album album : artist.getAlbumList()) {
-				TreeItem<String> albumItem = new TreeItem<String>(album.getName());
-				artistItem.getChildren().add(albumItem);
+	
+	public void updateArtists (SongModel songModel) {
+		mediaList = new HashMap<>();
+		for (Song song : songModel.getSongs()) {
+			if (!mediaList.containsKey(song.getArtist())) {
+				mediaList.put(song.getArtist(), new TreeSet<>());
 			}
-			rootNode.getChildren().add(artistItem);
+			mediaList.get(song.getArtist()).add(song.getAlbum());
 		}
+		mtv.updateTreeView(mediaList);
 	}
 
 }

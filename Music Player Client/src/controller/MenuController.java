@@ -46,7 +46,7 @@ public class MenuController {
 							SongModel songModel = tcpCtrl.requestSongs(ipField.getText());
 							stage.close();
 							Thread.sleep(1000);
-//							treeCtrl.updateArtists(songModel);
+							treeCtrl.updateArtists(songModel);
 							tableCtrl.updateSongs(songModel);
 							statusCtrl.updateCount(songModel);
 

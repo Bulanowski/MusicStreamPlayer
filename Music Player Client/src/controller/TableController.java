@@ -16,7 +16,7 @@ public class TableController {
 
 	public TableController(PrimaryView primaryView) {
 		table = new TableView<>();
-		table.setPlaceholder(new Label("Ain't no shit in this bitch"));
+		table.setPlaceholder(new Label("No media"));
 		name = new TableColumn<>("Name");
 		name.setCellValueFactory(new PropertyValueFactory<Song, String>("name"));
 		artist = new TableColumn<>("Artist");

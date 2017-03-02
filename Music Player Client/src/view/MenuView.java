@@ -30,6 +30,7 @@ public class MenuView {
 		Menu search = new Menu();
 		searchField = new TextField();
 		search.setGraphic(searchField);
+		search.setStyle("-fx-background-color: transparent;");
 		searchBar.getMenus().add(search);
 
 		Region spacer = new Region();

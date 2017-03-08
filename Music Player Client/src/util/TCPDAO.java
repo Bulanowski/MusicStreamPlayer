@@ -32,7 +32,7 @@ public class TCPDAO {
 		} catch (ConnectException ex) {
 			Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
 			alert.showAndWait();
-		} // End Try
+		}
 	}
 
 	public SongModel getSongModel() {

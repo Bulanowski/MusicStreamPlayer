@@ -48,7 +48,7 @@ public class MenuController {
 							tableCtrl.updateSongs(songModel);
 							statusCtrl.updateCount(songModel);
 						} catch (NullPointerException e) {
-							
+
 						} finally {
 							stage.close();
 						}

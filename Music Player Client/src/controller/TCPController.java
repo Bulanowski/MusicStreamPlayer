@@ -13,18 +13,19 @@ import model.Song;
 import model.SongModel;
 
 public class TCPController {
-	
+
 	private SongModel songModel;
-	
+
 	public SongModel requestSongs(String ip) {
 		try {
 			Socket clientSocket = new Socket(ip, 6789);
 			ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
 			ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
-			outToServer.writeObject("send");
+
+			outToServer.writeObject("request_songs");
 
 			ArrayList<Song> songs = (ArrayList<Song>) inFromServer.readObject();
-			
+
 			songModel = new SongModel(songs);
 
 			System.out.println("Got Object");
@@ -38,23 +39,5 @@ public class TCPController {
 		}
 		return songModel;
 	}
-
-//	private TCPDAO connection;
-//
-//	public TCPController() {
-//		connection = new TCPDAO();
-//	}
-//
-//	public SongModel requestSongs(String text) {
-//		try {
-//			connection.connect(text);
-//			SongModel songModel = connection.getSongModel();
-//			return songModel;
-//		} catch (IOException e) {
-//			System.out.println("Unable to Connect");
-//			e.printStackTrace();
-//		}
-//		throw new ConnectException();
-//	}
 
 }

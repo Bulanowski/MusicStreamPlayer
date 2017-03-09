@@ -11,7 +11,7 @@ public class MainController {
 		TCPController tcpCtrl = new TCPController();
 
 		TreeController treeCtrl = new TreeController(primaryView);
-		TableController tableCtrl = new TableController(primaryView);
+		TableController tableCtrl = new TableController(primaryView, tcpCtrl);
 		StatusController statusCtrl = new StatusController(primaryView);
 		MenuController menuCtrl = new MenuController(primaryView, tcpCtrl, treeCtrl, tableCtrl, statusCtrl);
 	}

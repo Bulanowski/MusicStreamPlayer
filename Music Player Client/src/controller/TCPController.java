@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javafx.scene.control.Alert;
@@ -13,8 +14,11 @@ import model.Song;
 import model.SongModel;
 
 public class TCPController {
+	
+	String ip;
 
-	public SongModel requestSongs(String ip) {
+	public SongModel requestSongs(String address) {
+		ip = address;
 		try {
 			Socket clientSocket = new Socket(ip, 6789);
 			ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -38,6 +42,21 @@ public class TCPController {
 			e.printStackTrace();
 		}
 		throw new NullPointerException();
+	}
+	
+	public void sendCommand(String command) {
+		try {
+			Socket clientSocket = new Socket(ip, 6789);
+			ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
+			outToServer.writeObject(command);
+			clientSocket.close();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }

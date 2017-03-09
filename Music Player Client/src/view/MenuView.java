@@ -24,6 +24,7 @@ public class MenuView {
 		connectLabel = new Label("Connect");
 		connect.setGraphic(connectLabel);
 		connectBar.getMenus().add(connect);
+		connectBar.setMinHeight(33);
 
 		MenuBar searchBar = new MenuBar();
 

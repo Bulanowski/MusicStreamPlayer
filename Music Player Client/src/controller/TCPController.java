@@ -14,8 +14,6 @@ import model.SongModel;
 
 public class TCPController {
 
-	private SongModel songModel;
-
 	public SongModel requestSongs(String ip) {
 		try {
 			Socket clientSocket = new Socket(ip, 6789);
@@ -24,20 +22,22 @@ public class TCPController {
 
 			outToServer.writeObject("request_songs");
 
+			@SuppressWarnings("unchecked")
 			ArrayList<Song> songs = (ArrayList<Song>) inFromServer.readObject();
 
-			songModel = new SongModel(songs);
+			SongModel songModel = new SongModel(songs);
 
 			System.out.println("Got Object");
 
 			clientSocket.close();
+			return songModel;
 		} catch (IOException e) {
 			Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
 			alert.showAndWait();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return songModel;
+		throw new NullPointerException();
 	}
 
 }

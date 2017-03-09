@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
-import javafx.scene.Node;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
@@ -30,7 +29,7 @@ public class MediaTreeView {
 		}
 	}
 	
-	public Node getNode() {
+	public TreeView<String> getTreeView() {
 		return tv;
 	}
 

@@ -15,6 +15,7 @@ public class MenuView {
 	private HBox menuBar;
 	private Label connectLabel;
 	private TextField searchField;
+	private SearchChangedListener searchChangedListener;
 
 	public MenuView() {
 
@@ -24,12 +25,18 @@ public class MenuView {
 		connectLabel = new Label("Connect");
 		connect.setGraphic(connectLabel);
 		connectBar.getMenus().add(connect);
-		connectBar.setMinHeight(33);
+		connectBar.setMinHeight(100/3);
 
 		MenuBar searchBar = new MenuBar();
 
 		Menu search = new Menu();
 		searchField = new TextField();
+		searchField.setOnKeyReleased(e -> {
+			SearchChangedEvent ev = new SearchChangedEvent(this, searchField.getText());
+			if (searchChangedListener != null) {
+				searchChangedListener.searchChanged(ev);
+			}
+		});
 		search.setGraphic(searchField);
 		search.setStyle("-fx-background-color: transparent;");
 		searchBar.getMenus().add(search);
@@ -42,6 +49,10 @@ public class MenuView {
 
 	public void onClickEvent(EventHandler<MouseEvent> mouseEvent) {
 		connectLabel.setOnMouseClicked(mouseEvent);
+	}
+	
+	public void setSearchChangedListener(SearchChangedListener searchChangedListener) {
+		this.searchChangedListener = searchChangedListener;
 	}
 
 	public Node getNode() {

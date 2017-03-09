@@ -44,15 +44,13 @@ public class MenuController {
 					public void handle(ActionEvent event) {
 						try {
 							SongModel songModel = tcpCtrl.requestSongs(ipField.getText());
-							stage.close();
-							Thread.sleep(1000);
 							treeCtrl.updateArtists(songModel);
 							tableCtrl.updateSongs(songModel);
 							statusCtrl.updateCount(songModel);
-
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+						} catch (NullPointerException e) {
+							
+						} finally {
+							stage.close();
 						}
 					}
 				});

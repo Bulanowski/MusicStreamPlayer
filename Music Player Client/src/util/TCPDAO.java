@@ -1,5 +1,6 @@
 package util;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ConnectException;
@@ -15,7 +16,7 @@ import model.SongModel;
 public class TCPDAO {
 	private SongModel songModel;
 
-	public void connect(String ip) throws Exception {
+	public void connect(String ip) {
 		try {
 			Socket clientSocket = new Socket(ip, 6789);
 			ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -29,9 +30,11 @@ public class TCPDAO {
 			System.out.println("Got Object");
 
 			clientSocket.close();
-		} catch (ConnectException ex) {
+		} catch (IOException e) {
 			Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
 			alert.showAndWait();
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
 		}
 	}
 

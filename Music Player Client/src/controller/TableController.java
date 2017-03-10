@@ -82,17 +82,17 @@ public class TableController {
 				break;
 			case ARTISTS:
 				for (Song song : songList)
-					if (song.getArtist().toLowerCase().equals(filter.toLowerCase()))
+					if (song.getArtist().equalsIgnoreCase(filter))
 						filteredList.add(song);
 				break;
 			case ALBUMS:
 				for (Song song : songList)
-					if (song.getAlbum().toLowerCase().equals(filter.toLowerCase()))
+					if (song.getAlbum().equalsIgnoreCase(filter))
 						filteredList.add(song);
 				break;
 			case SONGS:
 				for (Song song : songList)
-					if (song.getName().toLowerCase().contains(filter.toLowerCase()))
+					if (song.getName().equalsIgnoreCase(filter))
 						filteredList.add(song);
 				break;
 			case ALL:

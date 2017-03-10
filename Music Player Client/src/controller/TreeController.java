@@ -78,7 +78,7 @@ public class TreeController {
 				public void handle(MouseEvent event) {
 					if (selected != null) {
 						if (selected.getValue().equals("Artists")) {
-							tblCtrl.applyFilter("", TableFilter.NONE);
+							tblCtrl.applyFilter(null, TableFilter.NONE);
 						} else if (selected.getParent().getValue().equals("Artists")) {
 							tblCtrl.applyFilter(selected.getValue(), TableFilter.ARTISTS);
 						} else {

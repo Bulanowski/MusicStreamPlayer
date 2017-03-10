@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import javafx.scene.control.Alert;
@@ -16,9 +15,26 @@ import model.SongModel;
 public class TCPController {
 	
 	String ip;
+	
+	public boolean attemptConnection(String address) {
+			try {
+				Socket clientSocket = new Socket(address, 6789);
+				clientSocket.close();
+				ip = address;
+				return true;
+			} catch (IOException e) {
+				Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
+				alert.showAndWait();
+			}
+		return false;
+	}
 
-	public SongModel requestSongs(String address) {
-		ip = address;
+	public SongModel requestSongs() {
+		if (ip == null) {
+			Alert alert = new Alert(AlertType.ERROR, "A connections to a server must first be established!", ButtonType.OK);
+			alert.showAndWait();
+			throw new NullPointerException();
+		}
 		try {
 			Socket clientSocket = new Socket(ip, 6789);
 			ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -45,17 +61,19 @@ public class TCPController {
 	}
 	
 	public void sendCommand(String command) {
+		if (ip == null) {
+			Alert alert = new Alert(AlertType.ERROR, "A connections to a server must first be established!", ButtonType.OK);
+			alert.showAndWait();
+			return;
+		}
 		try {
 			Socket clientSocket = new Socket(ip, 6789);
 			ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
 			outToServer.writeObject(command);
 			clientSocket.close();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
+			alert.showAndWait();
 		}
 	}
 

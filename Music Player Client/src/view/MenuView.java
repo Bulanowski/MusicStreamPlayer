@@ -25,7 +25,7 @@ public class MenuView {
 		connectLabel = new Label("Connect");
 		connect.setGraphic(connectLabel);
 		connectBar.getMenus().add(connect);
-		connectBar.setMinHeight(100/3);
+		connectBar.setMinHeight(100 / 3);
 
 		MenuBar searchBar = new MenuBar();
 
@@ -50,7 +50,7 @@ public class MenuView {
 	public void onClickEvent(EventHandler<MouseEvent> mouseEvent) {
 		connectLabel.setOnMouseClicked(mouseEvent);
 	}
-	
+
 	public void setSearchChangedListener(SearchChangedListener searchChangedListener) {
 		this.searchChangedListener = searchChangedListener;
 	}

@@ -12,6 +12,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Callback;
 import model.Song;
 import model.SongModel;
+import model.TableFilter;
 import view.PrimaryView;
 
 public class TreeController {
@@ -77,16 +78,16 @@ public class TreeController {
 				public void handle(MouseEvent event) {
 					if (selected != null) {
 						if (selected.getValue().equals("Artists")) {
-							tblCtrl.applyFilter("", 0);
+							tblCtrl.applyFilter("", TableFilter.NONE);
 						} else if (selected.getParent().getValue().equals("Artists")) {
-							tblCtrl.applyFilter(selected.getValue(), 1);
+							tblCtrl.applyFilter(selected.getValue(), TableFilter.ARTISTS);
 						} else {
-							tblCtrl.applyFilter(selected.getValue(), 2);
+							tblCtrl.applyFilter(selected.getValue(), TableFilter.ALBUMS);
 						}
 					}
 				}
 			});
-			
+
 		}
 	}
 

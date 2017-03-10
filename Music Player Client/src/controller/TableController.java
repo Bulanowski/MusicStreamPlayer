@@ -15,6 +15,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import model.Song;
 import model.SongModel;
+import model.TableFilter;
 import view.PrimaryView;
 
 public class TableController {
@@ -72,30 +73,29 @@ public class TableController {
 		table.setItems(songList);
 	}
 
-	// type: 0 = none, 1 = artist, 2 = album, 3 = song, 4 = all
-	public void applyFilter(String filter, int type) {
+	public void applyFilter(String filter, TableFilter filterType) {
 		if (songList != null && !songList.isEmpty()) {
 			ObservableList<Song> filteredList = FXCollections.observableArrayList();
-			switch (type) {
-			case 0:
+			switch (filterType) {
+			case NONE:
 				filteredList = songList;
 				break;
-			case 1:
+			case ARTISTS:
 				for (Song song : songList)
 					if (song.getArtist().toLowerCase().equals(filter.toLowerCase()))
 						filteredList.add(song);
 				break;
-			case 2:
+			case ALBUMS:
 				for (Song song : songList)
 					if (song.getAlbum().toLowerCase().equals(filter.toLowerCase()))
 						filteredList.add(song);
 				break;
-			case 3:
+			case SONGS:
 				for (Song song : songList)
 					if (song.getName().toLowerCase().contains(filter.toLowerCase()))
 						filteredList.add(song);
 				break;
-			case 4:
+			case ALL:
 				for (Song song : songList)
 					if (song.getArtist().toLowerCase().contains(filter.toLowerCase())
 							|| song.getAlbum().toLowerCase().contains(filter.toLowerCase())

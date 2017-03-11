@@ -9,7 +9,7 @@ import view.PrimaryView;
 public class ChatController {
 
 	private ChatBoxView chatBoxView;
-	private String name;
+	private String username;
 
 	public ChatController(PrimaryView primaryView, TCP tcp) {
 		chatBoxView = new ChatBoxView();

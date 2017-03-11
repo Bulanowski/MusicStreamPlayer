@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 public class Song implements Serializable, Comparable<Song>, Comparator<Song> {
-	/**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 5576066606363296036L;
 
 	private String path;

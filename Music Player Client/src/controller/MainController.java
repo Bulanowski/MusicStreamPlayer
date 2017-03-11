@@ -13,7 +13,7 @@ public class MainController {
 		TableController tableCtrl = new TableController(primaryView, tcpCtrl);
 		TreeController treeCtrl = new TreeController(primaryView, tableCtrl);
 		StatusController statusCtrl = new StatusController(primaryView);
-		ChatBoxController chatBoxCtrl = new ChatBoxController(primaryView, tcpCtrl);
+		ChatController chatBoxCtrl = new ChatController(primaryView, tcpCtrl);
 		MenuController menuCtrl = new MenuController(primaryView, tcpCtrl, treeCtrl, tableCtrl, statusCtrl, chatBoxCtrl);
 	}
 

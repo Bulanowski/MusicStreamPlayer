@@ -5,11 +5,12 @@ import view.ChatSendEvent;
 import view.ChatSendListener;
 import view.PrimaryView;
 
-public class ChatBoxController {
+public class ChatController {
 	
 	private ChatBoxView chatBoxView;
+	private String name;
 	
-	public ChatBoxController(PrimaryView primaryView, TCPController tcpCtrl) {
+	public ChatController(PrimaryView primaryView, TCPController tcpCtrl) {
 		chatBoxView = new ChatBoxView();
 		
 		chatBoxView.setChatSendListener(new ChatSendListener() {

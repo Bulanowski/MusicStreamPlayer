@@ -17,8 +17,4 @@ public class SongModel {
 		return songs;
 	}
 
-	public int size() {
-		return songs.size();
-	}
-
 }

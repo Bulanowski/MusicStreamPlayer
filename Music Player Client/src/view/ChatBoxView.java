@@ -15,6 +15,7 @@ public class ChatBoxView {
 	
 	private Stage stage;
 	private BorderPane pane;
+	private TextArea chatArea;
 	private ChatSendListener chatSendListener;
 	
 	public ChatBoxView() {
@@ -23,7 +24,7 @@ public class ChatBoxView {
 		
 		stage.setTitle("Chat Box");
 		
-		TextArea chatArea = new TextArea();
+		chatArea = new TextArea();
 		chatArea.setEditable(false);
 		pane.setCenter(chatArea);
 		
@@ -60,6 +61,10 @@ public class ChatBoxView {
 	
 	public void setChatSendListener(ChatSendListener chatSendListener) {
 		this.chatSendListener = chatSendListener;
+	}
+	
+	public void addMessage(String messageText) {
+		chatArea.appendText("\r\n" + messageText);
 	}
 	
 	public void show() {

@@ -19,8 +19,11 @@ public class TCPController {
 	public boolean attemptConnection(String address) {
 			try {
 				Socket clientSocket = new Socket(address, 6789);
+				ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
+				outToServer.writeObject("hello");
 				clientSocket.close();
 				ip = address;
+				System.out.println("Connection Successful to " + ip);
 				return true;
 			} catch (IOException e) {
 				Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
@@ -28,12 +31,16 @@ public class TCPController {
 			}
 		return false;
 	}
+	
+	public boolean hasConnection() {
+		return ip != null;
+	}
 
 	public SongModel requestSongs() {
 		if (ip == null) {
 			Alert alert = new Alert(AlertType.ERROR, "A connections to a server must first be established!", ButtonType.OK);
 			alert.showAndWait();
-			throw new NullPointerException();
+			return null;
 		}
 		try {
 			Socket clientSocket = new Socket(ip, 6789);
@@ -52,8 +59,9 @@ public class TCPController {
 			clientSocket.close();
 			return songModel;
 		} catch (IOException e) {
-			Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
+			Alert alert = new Alert(AlertType.ERROR, "Failed to receive song list!", ButtonType.OK);
 			alert.showAndWait();
+			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -67,12 +75,13 @@ public class TCPController {
 			return;
 		}
 		try {
+			System.out.println("Sending Command: " + command);
 			Socket clientSocket = new Socket(ip, 6789);
 			ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
 			outToServer.writeObject(command);
 			clientSocket.close();
 		} catch (IOException e) {
-			Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
+			Alert alert = new Alert(AlertType.ERROR, "Failed to send command!", ButtonType.OK);
 			alert.showAndWait();
 		}
 	}

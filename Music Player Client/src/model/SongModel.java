@@ -1,16 +1,16 @@
 package model;
 
-import java.util.ArrayList;
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class SongModel {
 	private ObservableList<Song> songs;
+	SongDAO source;
 
-	public SongModel(ArrayList<Song> songData) {
+	public SongModel(SongDAO songDAO) {
+		source = songDAO;
 		songs = FXCollections.observableArrayList();
-		songs.addAll(songData);
+		songs.addAll(source.getAll());
 	}
 
 	public ObservableList<Song> getSongs() {

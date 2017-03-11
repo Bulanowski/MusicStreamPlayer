@@ -1,5 +1,6 @@
 package controller;
 
+import model.TCP;
 import view.PrimaryView;
 
 public class MainController {
@@ -8,13 +9,13 @@ public class MainController {
 	public MainController(PrimaryView primaryView) {
 		this.pv = primaryView;
 
-		TCPController tcpCtrl = new TCPController();
+		TCP tcp = new TCP();
 
-		TableController tableCtrl = new TableController(primaryView, tcpCtrl);
+		TableController tableCtrl = new TableController(primaryView, tcp);
 		TreeController treeCtrl = new TreeController(primaryView, tableCtrl);
 		StatusController statusCtrl = new StatusController(primaryView);
-		ChatController chatBoxCtrl = new ChatController(primaryView, tcpCtrl);
-		MenuController menuCtrl = new MenuController(primaryView, tcpCtrl, treeCtrl, tableCtrl, statusCtrl, chatBoxCtrl);
+		ChatController chatBoxCtrl = new ChatController(primaryView, tcp);
+		MenuController menuCtrl = new MenuController(primaryView, treeCtrl, tableCtrl, statusCtrl, chatBoxCtrl, tcp);
 	}
 
 }

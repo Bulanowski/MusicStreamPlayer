@@ -14,10 +14,13 @@ import javafx.scene.control.Alert.AlertType;
 public class TCP {
 
 	private Socket socket;
+	private ObjectOutputStream oos;
 
 	public void connect(String ipAddress, int port) {
 		try {
 			socket = new Socket(ipAddress, port);
+			System.out.println("Connection established to " + ipAddress + " on port " + port);
+			oos = new ObjectOutputStream(getOutputStream());
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -39,8 +42,9 @@ public class TCP {
 	public void sendCommand(String command) {
 		try {
 			if (socket != null) {
-				ObjectOutputStream outToServer = new ObjectOutputStream(getOutputStream());
-				outToServer.writeObject(command);
+				System.out.println(command);
+				oos.writeUTF(command);
+				oos.flush();
 			} else {
 				Alert alert = new Alert(AlertType.ERROR, "A connection has not yet been established!", ButtonType.OK);
 				alert.showAndWait();

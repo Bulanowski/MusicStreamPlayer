@@ -7,6 +7,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
+import model.MediaPlayer;
 import model.SongModel;
 import model.TCP;
 import model.TCPSongDAO;
@@ -40,6 +41,7 @@ public class MenuController {
 				if (result.isPresent()) {
 					try {
 						SongModel songModel = new SongModel(new TCPSongDAO(tcp, result.get()));
+						MediaPlayer mediaPlayer = new MediaPlayer(result.get());
 						treeCtrl.updateArtists(songModel);
 						tableCtrl.updateSongs(songModel);
 						statusCtrl.updateCount(songModel);

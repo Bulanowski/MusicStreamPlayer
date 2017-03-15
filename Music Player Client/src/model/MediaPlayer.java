@@ -82,10 +82,7 @@ public class MediaPlayer extends Thread {
 	class Playback {
 
 		private SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
-			float oldVolume = 0.0f;
-			if (volume != null) {
-				oldVolume = volume.getValue();
-			}
+			float oldVolume = (volume != null ? volume.getValue() : 0.0f);
 			res = null;
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 			res = (SourceDataLine) AudioSystem.getLine(info);
@@ -182,6 +179,7 @@ public class MediaPlayer extends Thread {
 
 	public void onApplicationClosed() {
 		try {
+			this.interrupt();
 			if (capture != null) {
 				capture.interrupt();
 			}
@@ -193,7 +191,6 @@ public class MediaPlayer extends Thread {
 				((DataLine) res).stop();
 				res.close();
 			}
-			this.interrupt();
 
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

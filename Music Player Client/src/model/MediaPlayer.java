@@ -82,11 +82,16 @@ public class MediaPlayer extends Thread {
 	class Playback {
 
 		private SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
+			float oldVolume = 0.0f;
+			if (volume != null) {
+				oldVolume = volume.getValue();
+			}
 			res = null;
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
 			res = (SourceDataLine) AudioSystem.getLine(info);
 			res.open();
 			volume = (FloatControl) res.getControl(FloatControl.Type.MASTER_GAIN);
+			volume.setValue(oldVolume);
 			volumeListener = new VolumeListener() {
 
 				@Override

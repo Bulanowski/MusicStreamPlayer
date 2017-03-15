@@ -22,9 +22,9 @@ public class StatusView {
 		volume = new Slider();
 		statusBar.setAlignment(Pos.CENTER);
 		statusBar.setPadding(new Insets(5, 5, 5, 5));
-		volume.setMin(-54);
-		volume.setMax(6.0206);
-		volume.setValue(3);
+		volume.setMin(-60);
+		volume.setMax(6);
+		volume.setValue(0);
 		
 		volume.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov,

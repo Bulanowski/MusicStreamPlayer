@@ -86,10 +86,18 @@ public class MediaPlayer extends Thread {
 
 	public void onApplicationClosed() {
 		try {
+			if(capture != null) {
 			capture.interrupt();
+			}
+			if(socketInputStream != null) {
 			socketInputStream.close();
+			}
+			if(socket != null) { 
 			socket.close();
+			}
+			if(player != null) {
 			player.close();
+			}
 			this.interrupt();
 			
 

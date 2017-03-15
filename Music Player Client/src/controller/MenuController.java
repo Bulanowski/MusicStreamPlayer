@@ -12,6 +12,8 @@ import model.SongModel;
 import model.TCP;
 import model.TCPSongDAO;
 import model.TableFilter;
+import view.AudioPlayingEvent;
+import view.AudioPlayingListener;
 import view.MenuView;
 import view.PrimaryView;
 import view.SearchChangedEvent;
@@ -43,6 +45,16 @@ public class MenuController {
 					try {
 						SongModel songModel = new SongModel(new TCPSongDAO(tcp, result.get()));
 						mediaPlayer = new MediaPlayer(result.get());
+
+						mediaPlayer.setAudioPlayingListener(new AudioPlayingListener() {
+
+							@Override
+							public void AudioOn(AudioPlayingEvent ev) {
+								statusCtrl.setVolumeListener(mediaPlayer.getVolumeListener());
+
+							}
+						});
+
 						treeCtrl.updateArtists(songModel);
 						tableCtrl.updateSongs(songModel);
 						statusCtrl.updateCount(songModel);
@@ -72,14 +84,13 @@ public class MenuController {
 		});
 
 		primaryView.setTop(menuView.getNode());
-		
-		
+
 	}
-	
+
 	public void onApplicationClosed() {
 		if (mediaPlayer != null) {
 			mediaPlayer.onApplicationClosed();
 		}
 	}
-	
+
 }

@@ -77,7 +77,9 @@ public class MenuController {
 	}
 	
 	public void onApplicationClosed() {
-		mediaPlayer.onApplicationClosed();
+		if (mediaPlayer != null) {
+			mediaPlayer.onApplicationClosed();
+		}
 	}
 	
 }

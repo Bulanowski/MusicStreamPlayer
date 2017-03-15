@@ -5,11 +5,10 @@ import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 
 public class TCP {
 
@@ -21,11 +20,9 @@ public class TCP {
 			socket = new Socket(ipAddress, port);
 			System.out.println("Connection established to " + ipAddress + " on port " + port);
 			oos = new ObjectOutputStream(getOutputStream());
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
+			alert.showAndWait();
 			e.printStackTrace();
 		}
 	}
@@ -37,6 +34,10 @@ public class TCP {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isConnected() {
+		return socket.isConnected();
 	}
 
 	public void sendCommand(String command) {

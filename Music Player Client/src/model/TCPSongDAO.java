@@ -1,7 +1,6 @@
 package model;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +24,13 @@ public class TCPSongDAO implements SongDAO {
 	public List<Song> getAll() {
 		List<Song> songs = new ArrayList<Song>();
 		try {
-			tcp.sendCommand("request_songs");
-			ObjectInputStream ois = new ObjectInputStream(tcp.getInputStream());
-			Object readObject = ois.readObject();
-			if (readObject instanceof List) {
-				songs = (List<Song>) readObject;
+			if (tcp.isConnected()) {
+				tcp.sendCommand("request_songs");
+				ObjectInputStream ois = new ObjectInputStream(tcp.getInputStream());
+				Object readObject = ois.readObject();
+				if (readObject instanceof List) {
+					songs = (List<Song>) readObject;
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

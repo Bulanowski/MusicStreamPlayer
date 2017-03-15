@@ -5,17 +5,26 @@ import view.PrimaryView;
 
 public class MainController {
 	private PrimaryView pv;
+	private TableController tableCtrl;
+	private TreeController treeCtrl;
+	private StatusController statusCtrl;
+	private ChatController chatBoxCtrl;
+	private MenuController menuCtrl;
 
 	public MainController(PrimaryView primaryView) {
 		this.pv = primaryView;
 
 		TCP tcp = new TCP();
 
-		TableController tableCtrl = new TableController(primaryView, tcp);
-		TreeController treeCtrl = new TreeController(primaryView, tableCtrl);
-		StatusController statusCtrl = new StatusController(primaryView);
-		ChatController chatBoxCtrl = new ChatController(primaryView, tcp);
-		MenuController menuCtrl = new MenuController(primaryView, treeCtrl, tableCtrl, statusCtrl, chatBoxCtrl, tcp);
+		tableCtrl = new TableController(primaryView, tcp);
+		treeCtrl = new TreeController(primaryView, tableCtrl);
+		statusCtrl = new StatusController(primaryView);
+		chatBoxCtrl = new ChatController(primaryView, tcp);
+		menuCtrl = new MenuController(primaryView, treeCtrl, tableCtrl, statusCtrl, chatBoxCtrl, tcp);
+	}
+
+	public void onApplicationClosed() {
+		menuCtrl.onApplicationClosed();
 	}
 
 }

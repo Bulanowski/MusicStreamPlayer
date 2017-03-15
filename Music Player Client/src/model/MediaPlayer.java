@@ -10,17 +10,20 @@ import java.nio.ByteBuffer;
 import javazoom.jl.player.Player;
 
 public class MediaPlayer extends Thread {
-	
+
 	Socket socket;
 	Thread playback;
+	Thread capture;
+	Player player;
+	InputStream socketInputStream;
 	volatile byte[] audioBuffer = new byte[100000000];
 	private volatile boolean startPlaying = false;
 	ByteBuffer byteBuffer = ByteBuffer.wrap(audioBuffer);
-	
+
 	public MediaPlayer(String ipAddress) {
 		try {
 			socket = new Socket(ipAddress, 8796);
-			Thread capture = new Thread(new Capture());
+			capture = new Thread(new Capture());
 			capture.start();
 			start();
 		} catch (UnknownHostException e) {
@@ -31,13 +34,13 @@ public class MediaPlayer extends Thread {
 			e.printStackTrace();
 		}
 	}
-		
+
 	public void run() {
-		while(true) {
+		while (!this.isInterrupted()) {
 			try {
 				if (startPlaying) {
 					ByteArrayInputStream bais = new ByteArrayInputStream(audioBuffer);
-					Player player = new Player(bais);
+					player = new Player(bais);
 					Thread.sleep(1000);
 					System.out.println("Playing");
 					player.play();
@@ -52,9 +55,9 @@ public class MediaPlayer extends Thread {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
-	
+
 	class Capture extends Thread {
 
 		public void run() {
@@ -62,23 +65,39 @@ public class MediaPlayer extends Thread {
 				int PACKET_SIZE = 20;
 
 				byte[] buffer = new byte[PACKET_SIZE];
-				
-				InputStream is = socket.getInputStream();
-				
-				while (true) {
-//					while (!new String(buffer).equals("end")) {
-						if (is.available() >= buffer.length) {
-							is.read(buffer);
-							byteBuffer.put(buffer);
-							startPlaying = true;
-						}
-//					}
-//					System.out.println("Stop Playing");
+
+				socketInputStream = socket.getInputStream();
+
+				while (!this.isInterrupted()) {
+					// while (!new String(buffer).equals("end")) {
+					if (socketInputStream.available() >= buffer.length) {
+						socketInputStream.read(buffer);
+						byteBuffer.put(buffer);
+						startPlaying = true;
+					}
+					// }
+					// System.out.println("Stop Playing");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void onApplicationClosed() {
+		try {
+			capture.interrupt();
+			socketInputStream.close();
+			socket.close();
+			player.close();
+			this.interrupt();
+			
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }

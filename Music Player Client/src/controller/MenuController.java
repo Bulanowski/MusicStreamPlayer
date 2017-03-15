@@ -20,6 +20,7 @@ import view.SearchChangedListener;
 public class MenuController {
 
 	private MenuView menuView;
+	private MediaPlayer mediaPlayer;
 
 	public MenuController(PrimaryView primaryView, TreeController treeCtrl, TableController tableCtrl,
 			StatusController statusCtrl, ChatController chatBoxCtrl, TCP tcp) {
@@ -41,7 +42,7 @@ public class MenuController {
 				if (result.isPresent()) {
 					try {
 						SongModel songModel = new SongModel(new TCPSongDAO(tcp, result.get()));
-						MediaPlayer mediaPlayer = new MediaPlayer(result.get());
+						mediaPlayer = new MediaPlayer(result.get());
 						treeCtrl.updateArtists(songModel);
 						tableCtrl.updateSongs(songModel);
 						statusCtrl.updateCount(songModel);
@@ -71,5 +72,12 @@ public class MenuController {
 		});
 
 		primaryView.setTop(menuView.getNode());
+		
+		
 	}
+	
+	public void onApplicationClosed() {
+		mediaPlayer.onApplicationClosed();
+	}
+	
 }

@@ -79,10 +79,6 @@ public class MediaPlayer extends Thread {
 		this.audioPlayingListener = audioPlayingListener;
 	}
 
-	public VolumeListener getVolumeListener() {
-		return volumeListener;
-	}
-
 	class Playback {
 
 		private SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
@@ -100,7 +96,7 @@ public class MediaPlayer extends Thread {
 				}
 			};
 			if (audioPlayingListener != null) {
-				AudioPlayingEvent ev = new AudioPlayingEvent(this);
+				AudioPlayingEvent ev = new AudioPlayingEvent(this, volumeListener);
 				audioPlayingListener.AudioOn(ev);
 			}
 

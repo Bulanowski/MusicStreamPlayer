@@ -50,7 +50,7 @@ public class MenuController {
 
 							@Override
 							public void AudioOn(AudioPlayingEvent ev) {
-								statusCtrl.setVolumeListener(((MediaPlayer) ev.getSource()).getVolumeListener());
+								statusCtrl.setVolumeListener(ev.getVolumeListener());
 
 							}
 						});

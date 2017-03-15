@@ -107,7 +107,7 @@ public class MediaPlayer extends Thread {
 
 		private void rawplay(AudioFormat targetFormat, AudioInputStream din)
 				throws IOException, LineUnavailableException {
-			byte[] data = new byte[4096];
+			byte[] data = new byte[256];
 			SourceDataLine line = getLine(targetFormat);
 			if (line != null) {
 				// Start
@@ -171,8 +171,10 @@ public class MediaPlayer extends Thread {
 					// }
 					// System.out.println("Stop Playing");
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (IOException e) {
+				if (!e.getMessage().equals("Stream closed.")) {
+					e.printStackTrace();
+				}
 			}
 		}
 	}

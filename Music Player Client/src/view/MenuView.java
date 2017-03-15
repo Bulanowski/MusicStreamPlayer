@@ -10,6 +10,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import model.SearchChangedEvent;
+import model.SearchChangedListener;
 
 public class MenuView {
 	private HBox menuBar;

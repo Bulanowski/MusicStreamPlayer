@@ -8,6 +8,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+import model.VolumeEvent;
+import model.VolumeListener;
 
 public class StatusView {
 	private HBox statusBar;

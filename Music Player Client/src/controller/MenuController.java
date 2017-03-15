@@ -7,17 +7,17 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
+import model.AudioPlayingEvent;
+import model.AudioPlayingListener;
 import model.MediaPlayer;
+import model.SearchChangedEvent;
+import model.SearchChangedListener;
 import model.SongModel;
 import model.TCP;
 import model.TCPSongDAO;
 import model.TableFilter;
-import view.AudioPlayingEvent;
-import view.AudioPlayingListener;
 import view.MenuView;
 import view.PrimaryView;
-import view.SearchChangedEvent;
-import view.SearchChangedListener;
 
 public class MenuController {
 
@@ -50,7 +50,7 @@ public class MenuController {
 
 							@Override
 							public void AudioOn(AudioPlayingEvent ev) {
-								statusCtrl.setVolumeListener(mediaPlayer.getVolumeListener());
+								statusCtrl.setVolumeListener(((MediaPlayer) ev.getSource()).getVolumeListener());
 
 							}
 						});

@@ -18,10 +18,6 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import javazoom.jl.player.Player;
-import view.AudioPlayingEvent;
-import view.AudioPlayingListener;
-import view.VolumeEvent;
-import view.VolumeListener;
 
 public class MediaPlayer extends Thread {
 
@@ -104,7 +100,7 @@ public class MediaPlayer extends Thread {
 				}
 			};
 			if (audioPlayingListener != null) {
-				AudioPlayingEvent ev = new AudioPlayingEvent(volume);
+				AudioPlayingEvent ev = new AudioPlayingEvent(this);
 				audioPlayingListener.AudioOn(ev);
 			}
 

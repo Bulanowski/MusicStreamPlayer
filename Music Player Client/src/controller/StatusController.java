@@ -1,9 +1,9 @@
 package controller;
 
 import model.SongModel;
+import model.VolumeListener;
 import view.PrimaryView;
 import view.StatusView;
-import view.VolumeListener;
 
 public class StatusController {
 	private StatusView sv;

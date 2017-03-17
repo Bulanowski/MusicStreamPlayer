@@ -30,14 +30,17 @@ public class MediaPlayer extends Thread {
 	private AudioPlayingListener audioPlayingListener;
 	private VolumeListener volumeListener;
 	InputStream socketInputStream;
-	volatile byte[] audioBuffer = new byte[100000000];
+	volatile byte[] audioBuffer;
 	private volatile boolean startPlaying = false;
-	ByteBuffer byteBuffer = ByteBuffer.wrap(audioBuffer);
+	private volatile boolean gotSize;
+	ByteBuffer byteBuffer;
 
 	public MediaPlayer(String ipAddress) {
 		try {
+			this.setName("Play-Thread");
 			socket = new Socket(ipAddress, 8796);
 			capture = new Thread(new Capture());
+			capture.setName("Capture-Thread");
 			capture.start();
 			start();
 		} catch (UnknownHostException e) {
@@ -53,23 +56,16 @@ public class MediaPlayer extends Thread {
 		while (!this.isInterrupted()) {
 			try {
 				if (startPlaying) {
-					// ByteArrayInputStream bais = new
-					// ByteArrayInputStream(audioBuffer);
-					// player = new Player(bais);
 					Thread.sleep(1000);
 					System.out.println("Playing");
 					playback = new Playback();
 					playback.start();
-					// player.play();
-					// player.close();
 					startPlaying = false;
-				} else {
-					audioBuffer = new byte[100000000];
-					byteBuffer = ByteBuffer.wrap(audioBuffer);
 				}
+				Thread.sleep(500);
 
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (InterruptedException e) {
+				System.err.println(Thread.currentThread().getName() + " was interrupted");
 			}
 		}
 
@@ -114,9 +110,17 @@ public class MediaPlayer extends Thread {
 				line.start();
 				int nBytesRead = 0;
 				while (nBytesRead != -1) {
-					nBytesRead = din.read(data, 0, data.length);
+					if (din.available() != -1) {
+						nBytesRead = din.read(data, 0, data.length);
+					} else {
+						din.reset();
+						nBytesRead = din.read(data, 0, data.length);
+					}
 					if (nBytesRead != -1) {
 						line.write(data, 0, nBytesRead);
+					} else {
+						gotSize = false;
+						System.out.println("-1!! No line write");
 					}
 				}
 				// Stop
@@ -154,27 +158,45 @@ public class MediaPlayer extends Thread {
 	class Capture extends Thread {
 
 		public void run() {
+			int bytesRead = 0;
 			try {
-				int PACKET_SIZE = 20;
+				int PACKET_SIZE = 10;
 
-				byte[] buffer = new byte[PACKET_SIZE];
-
+				byte[] buffer;
 				socketInputStream = socket.getInputStream();
-
+				gotSize = false;
 				while (!this.isInterrupted()) {
-					// while (!new String(buffer).equals("end")) {
-					if (socketInputStream.available() >= buffer.length) {
-						socketInputStream.read(buffer);
-						byteBuffer.put(buffer);
-						startPlaying = true;
+					if (socketInputStream.available() >= PACKET_SIZE) {
+						int size = 0;
+
+						if (!gotSize) {
+							buffer = new byte[4];
+							socketInputStream.read(buffer);
+							size = ByteBuffer.wrap(buffer).getInt();
+							System.out.println(size);
+							audioBuffer = new byte[size + 10];
+							byteBuffer = ByteBuffer.wrap(audioBuffer);
+						} else {
+							buffer = new byte[PACKET_SIZE];
+							bytesRead += socketInputStream.read(buffer);
+							byteBuffer.put(buffer);
+							if (bytesRead >= 4096) {
+								startPlaying = true;
+							}
+						}
+						gotSize = true;
+
+					} else {
+						Thread.sleep(500);
 					}
-					// }
-					// System.out.println("Stop Playing");
+
 				}
 			} catch (IOException e) {
 				if (!e.getMessage().equals("Stream closed.")) {
 					e.printStackTrace();
 				}
+			} catch (InterruptedException e) {
+				System.err.println(Thread.currentThread().getName() + " was interrupted");
 			}
 		}
 	}

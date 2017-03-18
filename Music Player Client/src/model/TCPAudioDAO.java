@@ -64,5 +64,6 @@ public class TCPAudioDAO implements AudioDAO {
 		System.out.println("Stop playing");
 		playing = false;
 		reset();
+		tcp.sendCommandWithoutReturn("song_end");
 	}
 }

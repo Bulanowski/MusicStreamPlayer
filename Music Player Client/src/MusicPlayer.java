@@ -12,12 +12,10 @@ public class MusicPlayer extends Application {
 
 	public static void main(String[] args) {
 		launch();
-
 	}
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		// TODO Auto-generated method stub
 		primaryView = new PrimaryView(primaryStage);
 		mc = new MainController(primaryView);
 

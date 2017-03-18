@@ -49,7 +49,7 @@ public class TableController {
 
 					@Override
 					public void handle(ActionEvent event) {
-						tcp.sendCommand("add_to_queue " + row.getItem().getPath());
+						tcp.sendCommandWithoutReturn("add_to_queue " + row.getItem().getPath());
 					}
 
 				});

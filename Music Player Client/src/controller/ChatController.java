@@ -18,7 +18,7 @@ public class ChatController {
 
 			@Override
 			public void chatSend(ChatSendEvent event) {
-				tcp.sendCommand("chat " + event.getMessageText());
+				tcp.sendCommandWithoutReturn("chat " + event.getMessageText());
 			}
 
 		});

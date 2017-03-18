@@ -2,10 +2,6 @@ package model;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -19,48 +15,62 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import javazoom.jl.player.Player;
 
-public class MediaPlayer extends Thread {
+public class AudioPlayer implements Runnable {
 
-	Socket socket;
-	Playback playback;
-	Thread capture;
+	private Thread thread;
+//	private Socket socket;
+	private Playback playback;
+//	Thread capture;
 	Player player;
-	Line res;
+	private Line res;
+	private AudioDAO audioDAO;
 	private FloatControl volume;
 	private AudioPlayingListener audioPlayingListener;
 	private VolumeListener volumeListener;
-	InputStream socketInputStream;
-	volatile byte[] audioBuffer;
-	private volatile boolean startPlaying = false;
-	private volatile boolean gotSize;
-	ByteBuffer byteBuffer;
+//	InputStream socketInputStream;
+//	volatile byte[] audioBuffer;
+//	private volatile boolean startPlaying = false;
+//	private volatile boolean gotSize;
+//	ByteBuffer byteBuffer;
+	
+	public AudioPlayer(AudioDAO audioDAO) {
+		this.audioDAO = audioDAO;
+		start();
+	}
 
-	public MediaPlayer(String ipAddress) {
-		try {
-			this.setName("Play-Thread");
-			socket = new Socket(ipAddress, 8796);
-			capture = new Thread(new Capture());
-			capture.setName("Capture-Thread");
-			capture.start();
-			start();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+//	public AudioPlayer(String ipAddress) {
+//		try {
+//			socket = new Socket(ipAddress, 8796);
+////			capture = new Thread(new Capture());
+////			capture.setName("Capture-Thread");
+////			capture.start();
+//			start();
+//		} catch (UnknownHostException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//	}
+	
+	public void start() {
+		if (thread == null) {
+			thread = new Thread(this);
+			thread.start();
 		}
 	}
 
+	@Override
 	public void run() {
-		while (!this.isInterrupted()) {
+		while (thread != null) {
 			try {
-				if (startPlaying) {
+				if (audioDAO.getPlaying()) {
 					Thread.sleep(1000);
 					System.out.println("Playing");
 					playback = new Playback();
 					playback.start();
-					startPlaying = false;
+					audioDAO.stopPlaying();
 				}
 				Thread.sleep(500);
 
@@ -68,7 +78,10 @@ public class MediaPlayer extends Thread {
 				System.err.println(Thread.currentThread().getName() + " was interrupted");
 			}
 		}
-
+	}
+	
+	public void stop() {
+		thread = null;
 	}
 
 	public void setAudioPlayingListener(AudioPlayingListener audioPlayingListener) {
@@ -76,6 +89,12 @@ public class MediaPlayer extends Thread {
 	}
 
 	class Playback {
+		
+		private volatile boolean forceStop = false;
+		
+		public void forceStop() {
+			forceStop = true;
+		}
 
 		private SourceDataLine getLine(AudioFormat audioFormat) throws LineUnavailableException {
 			float oldVolume = (volume != null ? volume.getValue() : 0.0f);
@@ -109,21 +128,17 @@ public class MediaPlayer extends Thread {
 				// Start
 				line.start();
 				int nBytesRead = 0;
-				while (nBytesRead != -1) {
-					if (din.available() != -1) {
-						nBytesRead = din.read(data, 0, data.length);
-					} else {
-						din.reset();
-						nBytesRead = din.read(data, 0, data.length);
-					}
+				System.out.println("Start rawplay loop");
+				while (!forceStop && nBytesRead != -1) {
+					nBytesRead = din.read(data);
 					if (nBytesRead != -1) {
 						line.write(data, 0, nBytesRead);
 					} else {
-						gotSize = false;
 						System.out.println("-1!! No line write");
 					}
 				}
 				// Stop
+				System.out.println("End rawplay loop");
 				line.drain();
 				line.stop();
 				line.close();
@@ -132,9 +147,17 @@ public class MediaPlayer extends Thread {
 		}
 
 		public void start() {
-			ByteArrayInputStream bais = new ByteArrayInputStream(audioBuffer);
+
+//			try {
+//				player = new Player(new ByteArrayInputStream(audioDAO.getAudioBuffer()));
+//				player.play();
+//				player.close();
+//			} catch (JavaLayerException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			try {
-				AudioInputStream in = AudioSystem.getAudioInputStream(bais);
+				AudioInputStream in = AudioSystem.getAudioInputStream(new ByteArrayInputStream(audioDAO.getAudioBuffer()));
 				AudioFormat baseFormat = in.getFormat();
 				AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(),
 						16, baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
@@ -155,71 +178,27 @@ public class MediaPlayer extends Thread {
 		}
 	}
 
-	class Capture extends Thread {
-
-		public void run() {
-			int bytesRead = 0;
-			try {
-				int PACKET_SIZE = 10;
-
-				byte[] buffer;
-				socketInputStream = socket.getInputStream();
-				gotSize = false;
-				while (!this.isInterrupted()) {
-					if (socketInputStream.available() >= PACKET_SIZE) {
-						int size = 0;
-
-						if (!gotSize) {
-							buffer = new byte[4];
-							socketInputStream.read(buffer);
-							size = ByteBuffer.wrap(buffer).getInt();
-							System.out.println(size);
-							audioBuffer = new byte[size + 10];
-							byteBuffer = ByteBuffer.wrap(audioBuffer);
-						} else {
-							buffer = new byte[PACKET_SIZE];
-							bytesRead += socketInputStream.read(buffer);
-							byteBuffer.put(buffer);
-							if (bytesRead >= 4096) {
-								startPlaying = true;
-							}
-						}
-						gotSize = true;
-
-					} else {
-						Thread.sleep(500);
-					}
-
-				}
-			} catch (IOException e) {
-				if (!e.getMessage().equals("Stream closed.")) {
-					e.printStackTrace();
-				}
-			} catch (InterruptedException e) {
-				System.err.println(Thread.currentThread().getName() + " was interrupted");
-			}
-		}
-	}
-
 	public void onApplicationClosed() {
-		try {
-			this.interrupt();
-			if (capture != null) {
-				capture.interrupt();
-			}
-			if (socket != null) {
-				socket.close();
-			}
+//		try {
+			thread = null;
+//			this.interrupt();
+//			if (capture != null) {
+//				capture.interrupt();
+//			}
+//			if (socket != null) {
+//				socket.close();
+//			}
+			playback.forceStop();
 			if (res != null) {
 				((DataLine) res).drain();
 				((DataLine) res).stop();
 				res.close();
 			}
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 	}
 

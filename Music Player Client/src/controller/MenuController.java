@@ -9,11 +9,12 @@ import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
 import model.AudioPlayingEvent;
 import model.AudioPlayingListener;
-import model.MediaPlayer;
+import model.AudioPlayer;
 import model.SearchChangedEvent;
 import model.SearchChangedListener;
 import model.SongModel;
 import model.TCP;
+import model.TCPAudioDAO;
 import model.TCPSongDAO;
 import model.TableFilter;
 import view.MenuView;
@@ -22,11 +23,14 @@ import view.PrimaryView;
 public class MenuController {
 
 	private MenuView menuView;
-	private MediaPlayer mediaPlayer;
+	private TCP tcp;
+	private SongModel songModel;
+	private AudioPlayer audioPlayer;
 
 	public MenuController(PrimaryView primaryView, TreeController treeCtrl, TableController tableCtrl,
 			StatusController statusCtrl, ChatController chatBoxCtrl, TCP tcp) {
 
+		this.tcp = tcp;
 		menuView = new MenuView();
 
 		menuView.onConnectClickEvent(new EventHandler<MouseEvent>() {
@@ -43,10 +47,12 @@ public class MenuController {
 				Optional<String> result = connectDialog.showAndWait();
 				if (result.isPresent()) {
 					try {
-						SongModel songModel = new SongModel(new TCPSongDAO(tcp, result.get()));
-						mediaPlayer = new MediaPlayer(result.get());
+						tcp.connect(result.get(), 53308);
+						songModel = new SongModel(new TCPSongDAO(tcp));
+						audioPlayer = new AudioPlayer(new TCPAudioDAO(tcp));
+						tcp.start();
 
-						mediaPlayer.setAudioPlayingListener(new AudioPlayingListener() {
+						audioPlayer.setAudioPlayingListener(new AudioPlayingListener() {
 
 							@Override
 							public void AudioOn(AudioPlayingEvent ev) {
@@ -59,7 +65,7 @@ public class MenuController {
 						tableCtrl.updateSongs(songModel);
 						statusCtrl.updateCount(songModel);
 					} catch (NullPointerException e) {
-
+						e.printStackTrace();
 					}
 				}
 			};
@@ -88,8 +94,9 @@ public class MenuController {
 	}
 
 	public void onApplicationClosed() {
-		if (mediaPlayer != null) {
-			mediaPlayer.onApplicationClosed();
+		if (audioPlayer != null) {
+			tcp.disconnect();
+			audioPlayer.onApplicationClosed();
 		}
 	}
 

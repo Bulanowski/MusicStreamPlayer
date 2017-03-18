@@ -9,9 +9,19 @@ public class TCPSongDAO implements SongDAO {
 
 	private TCP tcp;
 
-	public TCPSongDAO(TCP tcp, String ipAddress) {
+	public TCPSongDAO(TCP tcp) {
 		this.tcp = tcp;
-		this.tcp.connect(ipAddress, 6789);
+//		tcp.addPackageReceivedListener(new PackageReceivedListener() {
+//			
+//			@Override
+//			public void readPackage(PackageReceivedEvent ev) {
+//				if (ev.getPackageType() == PackageType.SONG_LIST.getByte()) {
+//					if (ev.getInformation() instanceof List) {
+//						songs = (List<Song>) ev.getInformation();
+//					}
+//				}
+//			}
+//		});
 	}
 
 	@Override
@@ -23,21 +33,11 @@ public class TCPSongDAO implements SongDAO {
 	@Override
 	public List<Song> getAll() {
 		List<Song> songs = new ArrayList<Song>();
-		try {
-			if (tcp.isConnected()) {
-				tcp.sendCommand("request_songs");
-				ObjectInputStream ois = new ObjectInputStream(tcp.getInputStream());
-				Object readObject = ois.readObject();
-				if (readObject instanceof List) {
-					songs = (List<Song>) readObject;
-				}
+		if (tcp.isConnected()) {
+			Object readObject = tcp.sendCommandWithReturn("request_songs");
+			if (readObject instanceof List) {
+				songs = (List<Song>) readObject;
 			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 
 		return songs;

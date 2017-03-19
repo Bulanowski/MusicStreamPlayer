@@ -95,7 +95,6 @@ public class MenuController {
 
 	public void onApplicationClosed() {
 		if (audioPlayer != null) {
-			tcp.disconnect();
 			audioPlayer.onApplicationClosed();
 		}
 	}

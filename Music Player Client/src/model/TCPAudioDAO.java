@@ -4,7 +4,7 @@ import java.nio.ByteBuffer;
 
 public class TCPAudioDAO implements AudioDAO {
 	
-	private TCP tcp;
+	private final TCP tcp;
 	private ByteBuffer byteBuffer;
 	private byte[] audioBuffer;
 	private volatile boolean playing = false;
@@ -20,7 +20,7 @@ public class TCPAudioDAO implements AudioDAO {
 				if (ev.getPackageType() == PackageType.BUFFER_SIZE.getByte()) {
 					if (!playing) {
 						size = (int) ev.getInformation();
-						audioBuffer = new byte[size + 10];
+						audioBuffer = new byte[size];
 						byteBuffer = ByteBuffer.wrap(audioBuffer);
 					} else {
 						System.out.println("Tried to set size while playing audio.");
@@ -32,7 +32,7 @@ public class TCPAudioDAO implements AudioDAO {
 					byte[] buffer = (byte[]) ev.getInformation();
 					bytesRead += buffer.length;
 					byteBuffer.put(buffer);
-					if (!playing && bytesRead >= size) {
+					if (!playing && bytesRead >= (size * 0.05)) {
 						startPlaying();
 					}
 				}
@@ -44,10 +44,11 @@ public class TCPAudioDAO implements AudioDAO {
 		playing = false;
 		size = 0;
 		bytesRead = 0;
+		byteBuffer = null;
+		audioBuffer = null;
 	}
 	
 	public byte[] getAudioBuffer() {
-		System.out.println("Get Audio Buffer");
 		return audioBuffer;
 	}
 	

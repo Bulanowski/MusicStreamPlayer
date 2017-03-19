@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.LinkedList;
 
 import javafx.scene.control.Alert;
@@ -19,7 +20,7 @@ public class TCP implements Runnable {
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
 	private final LinkedList<PackageReceivedListener> packageReceivedListeners;
-	
+
 	public TCP() {
 		packageReceivedListeners = new LinkedList<PackageReceivedListener>();
 	}
@@ -35,30 +36,20 @@ public class TCP implements Runnable {
 			alert.showAndWait();
 		}
 	}
-	
+
 	public void open() throws IOException {
 		output = new ObjectOutputStream(socket.getOutputStream());
 		input = new ObjectInputStream(socket.getInputStream());
 	}
-	
+
 	public void addPackageReceivedListener(PackageReceivedListener packageReceivedListener) {
 		packageReceivedListeners.add(packageReceivedListener);
 	}
-	
-//	public void close() {
-//		try {
-//			if (socket != null) {
-//				socket.close();
-//			}
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	
+
 	public void start() {
 		if (thread == null) {
 			thread = new Thread(this);
+			thread.setName("TCP-Input");
 			thread.start();
 		}
 	}
@@ -73,6 +64,8 @@ public class TCP implements Runnable {
 				for (PackageReceivedListener listener : packageReceivedListeners) {
 					listener.readPackage(ev);
 				}
+			} catch (SocketException e) {
+				System.err.println(e.getMessage());
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -80,14 +73,13 @@ public class TCP implements Runnable {
 			}
 		}
 	}
-	
+
 	private void stop() {
 		thread = null;
 	}
-	
+
 	public void disconnect() {
 		try {
-			sendCommandWithoutReturn("end_connection");
 			if (socket != null) {
 				socket.close();
 			}
@@ -96,45 +88,35 @@ public class TCP implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public boolean isConnected() {
 		return socket.isConnected();
 	}
-	
+
 	public synchronized void sendCommandWithoutReturn(String command) {
 		try {
-			if (socket != null) {
-				System.out.println(command);
-				output.writeUTF(command);
-				output.flush();
-			} else {
-				Alert alert = new Alert(AlertType.ERROR, "A connection has not yet been established!", ButtonType.OK);
-				alert.showAndWait();
-			}
+			System.out.println(command);
+			output.writeUTF(command);
+			output.flush();
+		} catch (SocketException e) {
+			System.err.println(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
-			Alert alert = new Alert(AlertType.ERROR, "Failed to send command!", ButtonType.OK);
-			alert.showAndWait();
 		}
 	}
 
 	public synchronized Object sendCommandWithReturn(String command) {
 		try {
-			if (socket != null) {
-				output.writeUTF(command);
-				System.out.println(command);
-				output.flush();
-				if (input.readByte() == PackageType.SONG_LIST.getByte()) {
-					return input.readObject();
-				}
-			} else {
-				Alert alert = new Alert(AlertType.ERROR, "A connection has not yet been established!", ButtonType.OK);
-				alert.showAndWait();
+			System.out.println(command);
+			output.writeUTF(command);
+			output.flush();
+			if (input.readByte() == PackageType.SONG_LIST.getByte()) {
+				return input.readObject();
 			}
+		} catch (SocketException e) {
+			System.err.println(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
-			Alert alert = new Alert(AlertType.ERROR, "Failed to send command!", ButtonType.OK);
-			alert.showAndWait();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}

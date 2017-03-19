@@ -5,6 +5,7 @@ import view.PrimaryView;
 
 public class MainController {
 	private PrimaryView pv;
+	private TCP tcp;
 	private TableController tableCtrl;
 	private TreeController treeCtrl;
 	private StatusController statusCtrl;
@@ -14,7 +15,7 @@ public class MainController {
 	public MainController(PrimaryView primaryView) {
 		this.pv = primaryView;
 
-		TCP tcp = new TCP();
+		tcp = new TCP();
 
 		tableCtrl = new TableController(primaryView, tcp);
 		treeCtrl = new TreeController(primaryView, tableCtrl);
@@ -24,6 +25,7 @@ public class MainController {
 	}
 
 	public void onApplicationClosed() {
+		tcp.disconnect();
 		menuCtrl.onApplicationClosed();
 	}
 

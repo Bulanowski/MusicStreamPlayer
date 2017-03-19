@@ -16,7 +16,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
 import model.Song;
 import model.SongModel;
-import model.TCP;
 import model.TableFilter;
 import view.PrimaryView;
 
@@ -28,7 +27,7 @@ public class TableController {
 	private TableColumn<Song, String> album;
 
 	@SuppressWarnings("unchecked")
-	public TableController(PrimaryView primaryView, TCP tcp) {
+	public TableController(PrimaryView primaryView, CommandController commandCtrl) {
 		table = new TableView<>();
 		table.setPlaceholder(new Label("No media"));
 		name = new TableColumn<>("Name");
@@ -51,7 +50,7 @@ public class TableController {
 
 					@Override
 					public void handle(ActionEvent event) {
-						tcp.sendCommand("add_to_queue " + row.getItem().getPath());
+						commandCtrl.addToQueue(row.getItem().getPath());
 					}
 
 				});

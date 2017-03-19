@@ -25,7 +25,6 @@ public class AudioPlayer implements Runnable {
 
 	public AudioPlayer(AudioDAO audioDAO) {
 		this.audioDAO = audioDAO;
-		start();
 	}
 
 	public void start() {
@@ -56,8 +55,18 @@ public class AudioPlayer implements Runnable {
 	}
 
 	public void stop() {
-		System.out.println("Stopping " + thread.getName() + " Thread");
-		thread = null;
+		if (thread != null) {
+			System.out.println("Stopping " + thread.getName() + " Thread");
+			thread = null;
+		}
+		if (playback != null) {
+			playback.forceStop();
+		}
+		if (res != null) {
+			((DataLine) res).drain();
+			((DataLine) res).stop();
+			res.close();
+		}
 	}
 
 	public void setAudioPlayingListener(AudioPlayingListener audioPlayingListener) {
@@ -124,6 +133,7 @@ public class AudioPlayer implements Runnable {
 
 		public void start() {
 			try {
+				forceStop = false;
 				AudioInputStream in = AudioSystem
 						.getAudioInputStream(new ByteArrayInputStream(audioDAO.getAudioBuffer()));
 				AudioFormat baseFormat = in.getFormat();
@@ -141,18 +151,4 @@ public class AudioPlayer implements Runnable {
 			}
 		}
 	}
-
-	public void onApplicationClosed() {
-		thread = null;
-		if (playback != null) {
-			playback.forceStop();
-		}
-		if (res != null) {
-			((DataLine) res).drain();
-			((DataLine) res).stop();
-			res.close();
-		}
-
-	}
-
 }

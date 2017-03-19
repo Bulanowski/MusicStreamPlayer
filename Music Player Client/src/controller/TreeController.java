@@ -43,7 +43,7 @@ public class TreeController {
 		songModel.getSongs().addListener(new ListChangeListener<Song>(){
 
 			@Override
-			public void onChanged(Change<? extends Song> change) {
+			public synchronized void onChanged(Change<? extends Song> change) {
 				HashMap<String, TreeSet<String>> mediaList = new HashMap<>();
 				for (Song song : songModel.getSongs()) {
 					if (!mediaList.containsKey(song.getArtist())) {

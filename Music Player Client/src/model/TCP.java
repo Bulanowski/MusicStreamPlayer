@@ -80,13 +80,15 @@ public class TCP implements Runnable {
 	}
 
 	private void stop() {
-		System.out.println("Stopping " + thread.getName() + " Thread");
-		thread = null;
+		if (thread != null) {
+			System.out.println("Stopping " + thread.getName() + " Thread");
+			thread = null;
+		}
 	}
 
 	public void disconnect() {
 		try {
-			packageReceivedListeners.clear();
+//			packageReceivedListeners.clear();
 			if (socket != null) {
 				socket.close();
 			}
@@ -102,9 +104,9 @@ public class TCP implements Runnable {
 
 	public synchronized void sendCommand(String command) {
 		try {
-			System.out.println(command);
 			output.writeUTF(command);
 			output.flush();
+			System.out.println(command);
 		} catch (SocketException e) {
 			if (socket.isClosed()) {
 				System.err.println(e.getMessage());

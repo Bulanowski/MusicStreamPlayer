@@ -20,6 +20,10 @@ public class SongModel {
 
 		});
 	}
+	
+	public void requestSongs() {
+		source.requestSongs();
+	}
 
 	public void clear() {
 		songs.clear();

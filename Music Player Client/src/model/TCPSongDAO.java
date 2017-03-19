@@ -14,6 +14,7 @@ public class TCPSongDAO implements SongDAO {
 			@Override
 			public void readPackage(PackageReceivedEvent ev) {
 				if (ev.getPackageType() == PackageType.SONG_LIST.getByte()) {
+					System.out.println("Received Song List");
 					if (ev.getInformation() instanceof List) {
 						@SuppressWarnings("unchecked")
 						SongListUpdateEvent event = new SongListUpdateEvent(this, (List<Song>) ev.getInformation());

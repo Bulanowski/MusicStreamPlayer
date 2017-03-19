@@ -1,6 +1,5 @@
 package controller;
 
-import model.TCP;
 import view.ChatBoxView;
 import view.ChatSendEvent;
 import view.ChatSendListener;
@@ -11,14 +10,14 @@ public class ChatController {
 	private ChatBoxView chatBoxView;
 //	private String username;
 
-	public ChatController(PrimaryView primaryView, TCP tcp) {
+	public ChatController(PrimaryView primaryView, CommandController commandCtrl) {
 		chatBoxView = new ChatBoxView();
 
 		chatBoxView.setChatSendListener(new ChatSendListener() {
 
 			@Override
 			public void chatSend(ChatSendEvent event) {
-				tcp.sendCommand("chat " + event.getMessageText());
+				commandCtrl.chat(event.getMessageText());
 			}
 
 		});

@@ -10,6 +10,7 @@ public class TCPAudioDAO implements AudioDAO {
 	private volatile boolean playing = false;
 	private int size = 0;
 	private int bytesRead = 0;
+	private final double BUFFER_PERCENTAGE = 0.05; // default = 0.05
 	
 	public TCPAudioDAO(TCP tcp) {
 		this.tcp = tcp;
@@ -19,9 +20,11 @@ public class TCPAudioDAO implements AudioDAO {
 			public void readPackage(PackageReceivedEvent ev) {
 				if (ev.getPackageType() == PackageType.BUFFER_SIZE.getByte()) {
 					if (!playing) {
+						bytesRead = 0;
 						size = (int) ev.getInformation();
 						audioBuffer = new byte[size];
 						byteBuffer = ByteBuffer.wrap(audioBuffer);
+						System.out.println("Receiving file with size " + size);
 					} else {
 						System.out.println("Tried to set size while playing audio.");
 						System.out.println("Size: " + size);
@@ -32,20 +35,12 @@ public class TCPAudioDAO implements AudioDAO {
 					byte[] buffer = (byte[]) ev.getInformation();
 					bytesRead += buffer.length;
 					byteBuffer.put(buffer);
-					if (!playing && bytesRead >= (size * 0.05)) {
+					if (!playing && bytesRead >= (size * BUFFER_PERCENTAGE)) {
 						startPlaying();
 					}
 				}
 			}
 		});
-	}
-	
-	public void reset() {
-		playing = false;
-		size = 0;
-		bytesRead = 0;
-		byteBuffer = null;
-		audioBuffer = null;
 	}
 	
 	public byte[] getAudioBuffer() {
@@ -64,7 +59,6 @@ public class TCPAudioDAO implements AudioDAO {
 	public void stopPlaying() {
 		System.out.println("Stop playing");
 		playing = false;
-		reset();
-		tcp.sendCommandWithoutReturn("song_end");
+		tcp.sendCommand("song_end");
 	}
 }

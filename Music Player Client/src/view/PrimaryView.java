@@ -7,42 +7,42 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class PrimaryView {
-	private Stage ps;
-	private BorderPane bp;
+	private Stage stage;
+	private BorderPane pane;
 
 	public PrimaryView(Stage primaryStage) {
-		this.ps = primaryStage;
+		stage = primaryStage;
 
-		bp = new BorderPane();
+		pane = new BorderPane();
 
-		primaryStage.setScene(new Scene(bp, 1000, 800));
-		primaryStage.setMinHeight(200);
-		primaryStage.setMinWidth(400);
-		primaryStage.show();
+		stage.setScene(new Scene(pane, 1000, 800));
+		stage.setTitle("Teamspeak Music Player");
+		stage.setMinHeight(200);
+		stage.setMinWidth(400);
+		stage.show();
 	}
 
 	public DoubleBinding getLeftWidth() {
-		return bp.widthProperty().divide(5);
+		return pane.widthProperty().divide(5);
 	}
 
 	public void setLeft(Node left) {
-		bp.setLeft(left);
+		pane.setLeft(left);
 	}
 
 	public void setCenter(Node center) {
-		bp.setCenter(center);
+		pane.setCenter(center);
 	}
 
 	public void setRight(Node right) {
-		bp.setRight(right);
+		pane.setRight(right);
 	}
 
 	public void setBottom(Node bottom) {
-		bp.setBottom(bottom);
+		pane.setBottom(bottom);
 	}
 
 	public void setTop(Node top) {
-		bp.setTop(top);
-
+		pane.setTop(top);
 	}
 }

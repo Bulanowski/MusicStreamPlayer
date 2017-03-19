@@ -2,6 +2,7 @@ package controller;
 
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,6 +27,7 @@ public class TableController {
 	private TableColumn<Song, String> artist;
 	private TableColumn<Song, String> album;
 
+	@SuppressWarnings("unchecked")
 	public TableController(PrimaryView primaryView, TCP tcp) {
 		table = new TableView<>();
 		table.setPlaceholder(new Label("No media"));
@@ -49,7 +51,7 @@ public class TableController {
 
 					@Override
 					public void handle(ActionEvent event) {
-						tcp.sendCommandWithoutReturn("add_to_queue " + row.getItem().getPath());
+						tcp.sendCommand("add_to_queue " + row.getItem().getPath());
 					}
 
 				});
@@ -69,9 +71,16 @@ public class TableController {
 		primaryView.setCenter(table);
 	}
 
-	public void updateSongs(SongModel songModel) {
-		songList = songModel.getSongs();
-		table.setItems(songList);
+	public void addSongModelListChangeListener(SongModel songModel) {
+		songModel.getSongs().addListener(new ListChangeListener<Song>() {
+
+			@Override
+			public void onChanged(Change<? extends Song> change) {
+				songList = songModel.getSongs();
+				table.setItems(songList);
+			}
+
+		});
 	}
 
 	public void applyFilter(String filter, TableFilter filterType) {

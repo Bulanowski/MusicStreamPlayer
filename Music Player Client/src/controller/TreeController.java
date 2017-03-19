@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeSet;
 
+import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
@@ -33,23 +34,34 @@ public class TreeController {
 		primaryView.setLeft(tree);
 		tree.prefWidthProperty().bind(primaryView.getLeftWidth());
 	}
+	
+	public void clear() {
+		rootNode.getChildren().clear();
+	}
+	
+	public void addSongModelListChangeListener(SongModel songModel) {
+		songModel.getSongs().addListener(new ListChangeListener<Song>(){
 
-	public void updateArtists(SongModel songModel) {
-		HashMap<String, TreeSet<String>> mediaList = new HashMap<>();
-		for (Song song : songModel.getSongs()) {
-			if (!mediaList.containsKey(song.getArtist())) {
-				mediaList.put(song.getArtist(), new TreeSet<>());
+			@Override
+			public void onChanged(Change<? extends Song> change) {
+				HashMap<String, TreeSet<String>> mediaList = new HashMap<>();
+				for (Song song : songModel.getSongs()) {
+					if (!mediaList.containsKey(song.getArtist())) {
+						mediaList.put(song.getArtist(), new TreeSet<>());
+					}
+					mediaList.get(song.getArtist()).add(song.getAlbum());
+				}
+				for (Entry<String, TreeSet<String>> artist : mediaList.entrySet()) {
+					TreeItem<String> artistItem = new TreeItem<String>(artist.getKey());
+					for (String album : artist.getValue()) {
+						TreeItem<String> albumItem = new TreeItem<String>(album);
+						artistItem.getChildren().add(albumItem);
+					}
+					rootNode.getChildren().add(artistItem);
+				}
 			}
-			mediaList.get(song.getArtist()).add(song.getAlbum());
-		}
-		for (Entry<String, TreeSet<String>> artist : mediaList.entrySet()) {
-			TreeItem<String> artistItem = new TreeItem<String>(artist.getKey());
-			for (String album : artist.getValue()) {
-				TreeItem<String> albumItem = new TreeItem<String>(album);
-				artistItem.getChildren().add(albumItem);
-			}
-			rootNode.getChildren().add(artistItem);
-		}
+			
+		});
 	}
 
 	private final class CustomTreeCell extends TreeCell<String> {

@@ -1,5 +1,8 @@
 package controller;
 
+import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
+import model.Song;
 import model.SongModel;
 import model.VolumeListener;
 import view.PrimaryView;
@@ -13,11 +16,22 @@ public class StatusController {
 
 		primaryView.setBottom(sv.getNode());
 	}
-
-	public void updateCount(SongModel songModel) {
-		sv.setSongCount(songModel.getSongs().size());
-	}
 	
+	public void addSongModelListChangeListener(SongModel songModel) {
+		songModel.getSongs().addListener(new ListChangeListener<Song>(){
+
+			@Override
+			public void onChanged(Change<? extends Song> change) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						sv.setSongCount(songModel.getSongs().size());
+					}
+				});
+			}
+			
+		});
+	}
 	
 	public void setVolumeListener(VolumeListener volumeListener) {
 		sv.setVolumeListener(volumeListener);

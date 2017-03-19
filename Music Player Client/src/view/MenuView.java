@@ -1,7 +1,6 @@
 package view;
 
 import javafx.event.EventHandler;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -15,7 +14,9 @@ import model.SearchChangedListener;
 
 public class MenuView {
 	private HBox menuBar;
+	private Menu connect;
 	private Label connectLabel;
+	private Label disconnectLabel;
 	private Label chatLabel;
 	private TextField searchField;
 	private SearchChangedListener searchChangedListener;
@@ -25,10 +26,12 @@ public class MenuView {
 		MenuBar menusBar = new MenuBar();
 		menusBar.setMinHeight(100 / 3);
 
-		Menu connect = new Menu();
+		connect = new Menu();
 		connectLabel = new Label("Connect");
 		connect.setGraphic(connectLabel);
 		menusBar.getMenus().add(connect);
+		
+		disconnectLabel = new Label("Disconnect");
 		
 		Menu chat = new Menu();
 		chatLabel = new Label("Chat");
@@ -54,12 +57,27 @@ public class MenuView {
 		HBox.setHgrow(spacer, Priority.SOMETIMES);
 		menuBar = new HBox(menusBar, spacer, searchBar);
 	}
+	
+	public void swapConnect() {
+		if (connect.getGraphic() instanceof Label) {
+			String text = ((Label) connect.getGraphic()).getText();
+			if (text.equals("Connect")) {
+				connect.setGraphic(disconnectLabel);
+			} else {
+				connect.setGraphic(connectLabel);
+			}
+		}
+	}
 
-	public void onConnectClickEvent(EventHandler<MouseEvent> mouseEvent) {
+	public void setOnConnectClickEvent(EventHandler<MouseEvent> mouseEvent) {
 		connectLabel.setOnMouseClicked(mouseEvent);
 	}
 	
-	public void onChatClickEvent(EventHandler<MouseEvent> mouseEvent) {
+	public void setOnDisconnectClickEvent(EventHandler<MouseEvent> mouseEvent) {
+		disconnectLabel.setOnMouseClicked(mouseEvent);
+	}
+	
+	public void setOnChatClickEvent(EventHandler<MouseEvent> mouseEvent) {
 		chatLabel.setOnMouseClicked(mouseEvent);
 	}
 
@@ -67,7 +85,7 @@ public class MenuView {
 		this.searchChangedListener = searchChangedListener;
 	}
 
-	public Node getNode() {
+	public HBox getNode() {
 		return menuBar;
 	}
 }

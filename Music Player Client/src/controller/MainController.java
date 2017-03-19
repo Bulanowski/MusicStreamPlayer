@@ -4,7 +4,7 @@ import model.TCP;
 import view.PrimaryView;
 
 public class MainController {
-	private PrimaryView pv;
+//	private PrimaryView pv;
 	private TCP tcp;
 	private TableController tableCtrl;
 	private TreeController treeCtrl;
@@ -13,7 +13,7 @@ public class MainController {
 	private MenuController menuCtrl;
 
 	public MainController(PrimaryView primaryView) {
-		this.pv = primaryView;
+//		this.pv = primaryView;
 
 		tcp = new TCP();
 

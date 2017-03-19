@@ -1,12 +1,12 @@
 package model;
 
-import java.util.List;
-
 public interface SongDAO {
+	
+	public void setSongListUpdateListener(SongListUpdateListener songListUpdateListener);
 	
 	public Song get(String songPath);
 	
-	public List<Song> getAll();
+	public void requestSongs();
 	
 	public boolean update(String songPath, Song song);
 	

@@ -3,53 +3,51 @@ package controller;
 import java.util.Optional;
 
 import javafx.event.EventHandler;
-import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.MouseEvent;
+import model.AudioDAO;
+import model.AudioPlayer;
 import model.AudioPlayingEvent;
 import model.AudioPlayingListener;
-import model.AudioPlayer;
 import model.SearchChangedEvent;
 import model.SearchChangedListener;
+import model.SongDAO;
 import model.SongModel;
 import model.TCP;
 import model.TCPAudioDAO;
 import model.TCPSongDAO;
 import model.TableFilter;
+import view.ConnectDialog;
 import view.MenuView;
 import view.PrimaryView;
 
 public class MenuController {
 
 	private MenuView menuView;
-	private TCP tcp;
 	private SongModel songModel;
 	private AudioPlayer audioPlayer;
 
 	public MenuController(PrimaryView primaryView, TreeController treeCtrl, TableController tableCtrl,
 			StatusController statusCtrl, ChatController chatBoxCtrl, TCP tcp) {
 
-		this.tcp = tcp;
 		menuView = new MenuView();
 
-		menuView.onConnectClickEvent(new EventHandler<MouseEvent>() {
+		menuView.setOnConnectClickEvent(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 
-				TextInputDialog connectDialog = new TextInputDialog();
-				ButtonType connectButtonType = new ButtonType("Connect", ButtonData.OK_DONE);
-
-				connectDialog.getDialogPane().setHeaderText("Enter the IP you wish to connect to.");
-				connectDialog.getDialogPane().setContentText("IP:");
-				connectDialog.getDialogPane().getButtonTypes().set(0, connectButtonType);
+				ConnectDialog connectDialog = new ConnectDialog();
 
 				Optional<String> result = connectDialog.showAndWait();
 				if (result.isPresent()) {
 					try {
 						tcp.connect(result.get(), 53308);
-						songModel = new SongModel(new TCPSongDAO(tcp));
-						audioPlayer = new AudioPlayer(new TCPAudioDAO(tcp));
+						SongDAO songDAO = new TCPSongDAO(tcp);
+						AudioDAO audioDAO = new TCPAudioDAO(tcp);
+						songModel = new SongModel(songDAO);
+						audioPlayer = new AudioPlayer(audioDAO);
 						tcp.start();
 
 						audioPlayer.setAudioPlayingListener(new AudioPlayingListener() {
@@ -61,9 +59,11 @@ public class MenuController {
 							}
 						});
 
-						treeCtrl.updateArtists(songModel);
-						tableCtrl.updateSongs(songModel);
-						statusCtrl.updateCount(songModel);
+						tableCtrl.addSongModelListChangeListener(songModel);
+						treeCtrl.addSongModelListChangeListener(songModel);
+						statusCtrl.addSongModelListChangeListener(songModel);
+						songDAO.requestSongs();
+						menuView.swapConnect();
 					} catch (NullPointerException e) {
 						e.printStackTrace();
 					}
@@ -71,7 +71,23 @@ public class MenuController {
 			};
 		});
 
-		menuView.onChatClickEvent(new EventHandler<MouseEvent>() {
+		menuView.setOnDisconnectClickEvent(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				Alert alert = new Alert(AlertType.CONFIRMATION, null, ButtonType.OK, ButtonType.CANCEL);
+				alert.setHeaderText("Are you sure you want to disconnect from the server?");
+				Optional<ButtonType> result = alert.showAndWait();
+				if (result.isPresent() && result.get() == ButtonType.OK) {
+					tcp.disconnect();
+					treeCtrl.clear();
+					songModel.clear();
+					audioPlayer.onApplicationClosed();
+					menuView.swapConnect();
+				}
+			}
+		});
+
+		menuView.setOnChatClickEvent(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent event) {

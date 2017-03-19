@@ -33,6 +33,7 @@ public class AudioPlayer implements Runnable {
 			thread = new Thread(this);
 			thread.setName("Audio-Player");
 			thread.start();
+			System.out.println("Starting " + thread.getName() + " Thread");
 		}
 	}
 
@@ -48,7 +49,6 @@ public class AudioPlayer implements Runnable {
 					audioDAO.stopPlaying();
 				}
 				Thread.sleep(500);
-
 			} catch (InterruptedException e) {
 				System.err.println(thread.getName() + " was interrupted");
 			}
@@ -56,6 +56,7 @@ public class AudioPlayer implements Runnable {
 	}
 
 	public void stop() {
+		System.out.println("Stopping " + thread.getName() + " Thread");
 		thread = null;
 	}
 
@@ -123,23 +124,19 @@ public class AudioPlayer implements Runnable {
 
 		public void start() {
 			try {
-				ByteArrayInputStream bais = new ByteArrayInputStream(audioDAO.getAudioBuffer());
-				AudioInputStream in = AudioSystem.getAudioInputStream(bais);
+				AudioInputStream in = AudioSystem
+						.getAudioInputStream(new ByteArrayInputStream(audioDAO.getAudioBuffer()));
 				AudioFormat baseFormat = in.getFormat();
 				AudioFormat decodedFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, baseFormat.getSampleRate(),
 						16, baseFormat.getChannels(), baseFormat.getChannels() * 2, baseFormat.getSampleRate(), false);
 				AudioInputStream din = AudioSystem.getAudioInputStream(decodedFormat, in);
 				rawplay(decodedFormat, din);
 				in.close();
-
 			} catch (UnsupportedAudioFileException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (LineUnavailableException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

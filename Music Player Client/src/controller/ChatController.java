@@ -9,7 +9,7 @@ import view.PrimaryView;
 public class ChatController {
 
 	private ChatBoxView chatBoxView;
-	private String username;
+//	private String username;
 
 	public ChatController(PrimaryView primaryView, TCP tcp) {
 		chatBoxView = new ChatBoxView();
@@ -18,7 +18,7 @@ public class ChatController {
 
 			@Override
 			public void chatSend(ChatSendEvent event) {
-				tcp.sendCommandWithoutReturn("chat " + event.getMessageText());
+				tcp.sendCommand("chat " + event.getMessageText());
 			}
 
 		});

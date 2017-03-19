@@ -51,6 +51,7 @@ public class TCP implements Runnable {
 			thread = new Thread(this);
 			thread.setName("TCP-Input");
 			thread.start();
+			System.out.println("Starting " + thread.getName() + " Thread");
 		}
 	}
 
@@ -65,7 +66,11 @@ public class TCP implements Runnable {
 					listener.readPackage(ev);
 				}
 			} catch (SocketException e) {
-				System.err.println(e.getMessage());
+				if (socket.isClosed()) {
+					System.err.println(e.getMessage());
+				} else {
+					e.printStackTrace();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (ClassNotFoundException e) {
@@ -75,11 +80,13 @@ public class TCP implements Runnable {
 	}
 
 	private void stop() {
+		System.out.println("Stopping " + thread.getName() + " Thread");
 		thread = null;
 	}
 
 	public void disconnect() {
 		try {
+			packageReceivedListeners.clear();
 			if (socket != null) {
 				socket.close();
 			}
@@ -90,37 +97,23 @@ public class TCP implements Runnable {
 	}
 
 	public boolean isConnected() {
-		return socket.isConnected();
+		return (socket != null ? socket.isConnected() : false);
 	}
 
-	public synchronized void sendCommandWithoutReturn(String command) {
+	public synchronized void sendCommand(String command) {
 		try {
 			System.out.println(command);
 			output.writeUTF(command);
 			output.flush();
 		} catch (SocketException e) {
-			System.err.println(e.getMessage());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public synchronized Object sendCommandWithReturn(String command) {
-		try {
-			System.out.println(command);
-			output.writeUTF(command);
-			output.flush();
-			if (input.readByte() == PackageType.SONG_LIST.getByte()) {
-				return input.readObject();
+			if (socket.isClosed()) {
+				System.err.println(e.getMessage());
+			} else {
+				e.printStackTrace();
 			}
-		} catch (SocketException e) {
-			System.err.println(e.getMessage());
 		} catch (IOException e) {
 			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
 		}
-		return null;
 	}
 
 	public InputStream getInputStream() throws IOException {

@@ -4,13 +4,25 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 public class SongModel {
-	private ObservableList<Song> songs;
-	SongDAO source;
+
+	private final ObservableList<Song> songs;
+	private final SongDAO source;
 
 	public SongModel(SongDAO songDAO) {
-		source = songDAO;
 		songs = FXCollections.observableArrayList();
-		songs.addAll(source.getAll());
+		source = songDAO;
+		source.setSongListUpdateListener(new SongListUpdateListener() {
+
+			@Override
+			public void songListUpdate(SongListUpdateEvent ev) {
+				songs.addAll(ev.getSongList());
+			}
+
+		});
+	}
+
+	public void clear() {
+		songs.clear();
 	}
 
 	public ObservableList<Song> getSongs() {

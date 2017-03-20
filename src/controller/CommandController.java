@@ -21,5 +21,9 @@ public class CommandController {
 	public void chat(String chatMessage) {
 		tcp.sendCommand("chat " + chatMessage);
 	}
+	
+	public void username(String username) {
+		tcp.sendCommand("username "+ username);
+	}
 
 }

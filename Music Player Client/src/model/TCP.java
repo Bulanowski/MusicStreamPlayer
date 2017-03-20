@@ -5,8 +5,10 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.LinkedList;
 
 import javafx.scene.control.Alert;
@@ -25,16 +27,25 @@ public class TCP implements Runnable {
 		packageReceivedListeners = new LinkedList<PackageReceivedListener>();
 	}
 
-	public void connect(String ipAddress, int port) {
+	public boolean connect(String host, int port) {
+		String alertMessage;
 		try {
-			socket = new Socket(ipAddress, port);
-			System.out.println("Connection established to " + ipAddress + " on port " + port);
+			socket = new Socket(host, port);
+			System.out.println("Connection established to " + host + " on port " + port);
 			open();
+			return true;
+		} catch (UnknownHostException e) {
+			alertMessage = "Unknown host address \"" + host + "\"!";
+		} catch (ConnectException e) {
+			System.err.println(e.getMessage());
+			alertMessage = "Unable to connect to \"" + host + "\"!";
 		} catch (IOException e) {
 			e.printStackTrace();
-			Alert alert = new Alert(AlertType.ERROR, "Unable to connect to server!", ButtonType.OK);
-			alert.showAndWait();
+			alertMessage = "An Error occurred when connecting to \"" + host + "\"!";
 		}
+		Alert alert = new Alert(AlertType.ERROR, alertMessage, ButtonType.OK);
+		alert.showAndWait();
+		return false;
 	}
 
 	public void open() throws IOException {
@@ -88,7 +99,6 @@ public class TCP implements Runnable {
 
 	public void disconnect() {
 		try {
-//			packageReceivedListeners.clear();
 			if (socket != null) {
 				socket.close();
 			}

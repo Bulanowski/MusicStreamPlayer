@@ -20,11 +20,10 @@ import view.PrimaryView;
 public class MenuController {
 
 	private MenuView menuView;
-//	private SongModel songModel;
-//	private AudioPlayer audioPlayer;
 
 	public MenuController(PrimaryView primaryView, TreeController treeCtrl, TableController tableCtrl,
-			StatusController statusCtrl, ChatController chatBoxCtrl, TCP tcp, SongModel songModel, AudioPlayer audioPlayer) {
+			StatusController statusCtrl, CommandController commandCtrl, ChatController chatBoxCtrl, TCP tcp,
+			SongModel songModel, AudioPlayer audioPlayer) {
 
 		menuView = new MenuView();
 
@@ -37,11 +36,12 @@ public class MenuController {
 				Optional<String> result = connectDialog.showAndWait();
 				if (result.isPresent()) {
 					try {
-						tcp.connect(result.get(), 53308);
-						tcp.start();
-						tcp.sendCommand("request_songs");
-						audioPlayer.start();
-						menuView.swapConnect();
+						if (tcp.connect(result.get(), 53308)) {
+							tcp.start();
+							commandCtrl.requestSongs();
+							audioPlayer.start();
+							menuView.swapConnect();
+						}
 					} catch (NullPointerException e) {
 						e.printStackTrace();
 					}

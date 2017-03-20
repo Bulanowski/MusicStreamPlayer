@@ -4,19 +4,33 @@ import java.io.Serializable;
 import java.util.Comparator;
 
 public class Song implements Serializable, Comparable<Song>, Comparator<Song> {
-	
-	private static final long serialVersionUID = 5576066606363296036L;
 
-	private String path;
+	private static final long serialVersionUID = 4898115281270251697L;
+
+	private final String path;
 	private String name;
 	private String album;
 	private String artist;
 	private int trackNumber;
 
-	public Song(String path, String name, int trackNumber) {
-		this.name = name;
+	public Song(String path, String name, String album, String artist, int trackNumber) {
 		this.path = path;
+		this.name = name;
+		this.album = album;
+		this.artist = artist;
 		this.trackNumber = trackNumber;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getAlbum() {
@@ -33,22 +47,6 @@ public class Song implements Serializable, Comparable<Song>, Comparator<Song> {
 
 	public void setArtist(String artist) {
 		this.artist = artist;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setF(String path) {
-		this.path = path;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public int getTrackNumber() {

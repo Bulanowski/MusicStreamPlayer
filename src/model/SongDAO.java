@@ -1,5 +1,7 @@
 package model;
 
+import model.event_handling.SongListUpdateListener;
+
 public interface SongDAO {
 	
 	public void setSongListUpdateListener(SongListUpdateListener songListUpdateListener);

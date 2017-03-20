@@ -1,7 +1,9 @@
-package model;
+package model.event_handling;
 
 import java.util.EventObject;
 import java.util.List;
+
+import model.Song;
 
 public class SongListUpdateEvent extends EventObject {
 

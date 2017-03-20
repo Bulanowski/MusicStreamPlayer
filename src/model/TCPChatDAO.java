@@ -1,5 +1,10 @@
 package model;
 
+import model.event_handling.ChatUpdateEvent;
+import model.event_handling.ChatUpdateListener;
+import model.event_handling.PackageReceivedEvent;
+import model.event_handling.PackageReceivedListener;
+
 public class TCPChatDAO implements ChatDAO {
 	private ChatUpdateListener chatUpdateListener;
 	

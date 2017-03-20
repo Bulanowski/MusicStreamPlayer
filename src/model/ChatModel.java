@@ -2,6 +2,8 @@ package model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.event_handling.ChatUpdateEvent;
+import model.event_handling.ChatUpdateListener;
 
 public class ChatModel {
 	private ChatDAO chatDAO;

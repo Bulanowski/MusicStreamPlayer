@@ -1,10 +1,7 @@
 package controller;
 
-import javafx.beans.Observable;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ListChangeListener.Change;
 import model.ChatModel;
-import model.Song;
 import view.ChatBoxView;
 import view.ChatSendEvent;
 import view.ChatSendListener;
@@ -13,7 +10,6 @@ import view.PrimaryView;
 public class ChatController {
 
 	private ChatBoxView chatBoxView;
-	// private String username;
 
 	public ChatController(PrimaryView primaryView, CommandController commandCtrl) {
 		chatBoxView = new ChatBoxView();

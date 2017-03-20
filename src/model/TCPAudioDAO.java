@@ -2,6 +2,9 @@ package model;
 
 import java.nio.ByteBuffer;
 
+import model.event_handling.PackageReceivedEvent;
+import model.event_handling.PackageReceivedListener;
+
 public class TCPAudioDAO implements AudioDAO {
 	
 	private final TCP tcp;

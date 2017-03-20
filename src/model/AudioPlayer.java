@@ -11,6 +11,11 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+import model.event_handling.AudioPlayingEvent;
+import model.event_handling.AudioPlayingListener;
+import model.event_handling.VolumeEvent;
+import model.event_handling.VolumeListener;
+
 public class AudioPlayer implements Runnable {
 
 	private Thread thread;

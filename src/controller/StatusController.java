@@ -4,7 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import model.Song;
 import model.SongModel;
-import model.VolumeListener;
+import model.event_handling.VolumeListener;
 import view.PrimaryView;
 import view.StatusView;
 

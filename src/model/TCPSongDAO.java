@@ -2,6 +2,11 @@ package model;
 
 import java.util.List;
 
+import model.event_handling.PackageReceivedEvent;
+import model.event_handling.PackageReceivedListener;
+import model.event_handling.SongListUpdateEvent;
+import model.event_handling.SongListUpdateListener;
+
 public class TCPSongDAO implements SongDAO {
 
 	private TCP tcp;

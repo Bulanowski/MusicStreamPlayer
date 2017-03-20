@@ -9,8 +9,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import model.VolumeEvent;
-import model.VolumeListener;
+import model.event_handling.VolumeEvent;
+import model.event_handling.VolumeListener;
 
 public class StatusView {
 	private VBox statusBar;

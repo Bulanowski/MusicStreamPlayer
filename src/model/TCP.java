@@ -13,6 +13,8 @@ import java.util.LinkedList;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import model.event_handling.PackageReceivedEvent;
+import model.event_handling.PackageReceivedListener;
 import javafx.scene.control.ButtonType;
 
 public class TCP implements Runnable {
@@ -35,13 +37,13 @@ public class TCP implements Runnable {
 			open();
 			return true;
 		} catch (UnknownHostException e) {
-			alertMessage = "Unknown host address \"" + host + "\"!";
+			alertMessage = "Unknown host address " + host + "!";
 		} catch (ConnectException e) {
 			System.err.println(e.getMessage());
-			alertMessage = "Unable to connect to \"" + host + "\"!";
+			alertMessage = "Unable to connect to " + host + "!";
 		} catch (IOException e) {
 			e.printStackTrace();
-			alertMessage = "An Error occurred when connecting to \"" + host + "\"!";
+			alertMessage = "An Error occurred when connecting to " + host + "!";
 		}
 		Alert alert = new Alert(AlertType.ERROR, alertMessage, ButtonType.OK);
 		alert.showAndWait();

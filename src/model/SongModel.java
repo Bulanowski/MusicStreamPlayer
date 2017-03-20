@@ -2,6 +2,8 @@ package model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import model.event_handling.SongListUpdateEvent;
+import model.event_handling.SongListUpdateListener;
 
 public class SongModel {
 

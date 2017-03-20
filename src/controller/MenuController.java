@@ -9,11 +9,11 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Pair;
 import model.AudioPlayer;
-import model.SearchChangedEvent;
-import model.SearchChangedListener;
 import model.SongModel;
 import model.TCP;
 import model.TableFilter;
+import model.event_handling.SearchChangedEvent;
+import model.event_handling.SearchChangedListener;
 import view.ConnectDialog;
 import view.MenuView;
 import view.PrimaryView;
@@ -21,8 +21,6 @@ import view.PrimaryView;
 public class MenuController {
 
 	private MenuView menuView;
-	// private SongModel songModel;
-	// private AudioPlayer audioPlayer;
 
 	public MenuController(PrimaryView primaryView, TreeController treeCtrl, TableController tableCtrl,
 			StatusController statusCtrl, CommandController commandCtrl, ChatController chatBoxCtrl, TCP tcp,
@@ -39,12 +37,13 @@ public class MenuController {
 				Optional<Pair<String, String>> result = connectDialog.showAndWait();
 				result.ifPresent(ipUser -> {
 					try {
-						tcp.connect(ipUser.getKey(), 53308);
-						tcp.start();
-						commandCtrl.requestSongs();
-						commandCtrl.username(ipUser.getValue());
-						audioPlayer.start();
-						menuView.swapConnect();
+						if (tcp.connect(ipUser.getKey(), 53308)) {
+							tcp.start();
+							commandCtrl.requestSongs();
+							commandCtrl.username(ipUser.getValue());
+							audioPlayer.start();
+							menuView.swapConnect();
+						}
 					} catch (NullPointerException e) {
 						e.printStackTrace();
 					}

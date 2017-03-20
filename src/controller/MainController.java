@@ -2,8 +2,6 @@ package controller;
 
 import model.AudioDAO;
 import model.AudioPlayer;
-import model.AudioPlayingEvent;
-import model.AudioPlayingListener;
 import model.ChatDAO;
 import model.ChatModel;
 import model.SongDAO;
@@ -12,6 +10,8 @@ import model.TCP;
 import model.TCPAudioDAO;
 import model.TCPChatDAO;
 import model.TCPSongDAO;
+import model.event_handling.AudioPlayingEvent;
+import model.event_handling.AudioPlayingListener;
 import view.PrimaryView;
 
 public class MainController {

@@ -1,4 +1,4 @@
-package model;
+package model.event_handling;
 
 import java.util.EventObject;
 

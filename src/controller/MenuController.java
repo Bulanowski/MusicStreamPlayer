@@ -81,7 +81,12 @@ public class MenuController {
 
 			@Override
 			public void handle(MouseEvent event) {
-				chatBoxCtrl.show();
+				if (tcp.isConnected()) {
+					chatBoxCtrl.show();
+				} else {
+					Alert alert = new Alert(AlertType.ERROR, "Unable to open chat while disconnected.", ButtonType.OK);
+					alert.showAndWait();
+				}
 			}
 
 		});

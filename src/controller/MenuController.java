@@ -7,7 +7,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Pair;
 import model.AudioPlayer;
 import model.SongModel;
 import model.TCP;
@@ -17,6 +16,7 @@ import model.event_handling.SearchChangedListener;
 import view.ConnectDialog;
 import view.MenuView;
 import view.PrimaryView;
+import view.UsernameDialog;
 
 public class MenuController {
 
@@ -34,22 +34,26 @@ public class MenuController {
 
 				ConnectDialog connectDialog = new ConnectDialog();
 
-				Optional<Pair<String, String>> result = connectDialog.showAndWait();
-				result.ifPresent(ipUser -> {
+				Optional<String> connectResult = connectDialog.showAndWait();
+				if (connectResult.isPresent()) {
 					try {
-						if (tcp.connect(ipUser.getKey(), 53308)) {
+						if (tcp.connect(connectResult.get(), 53308)) {
 							tcp.start();
 							commandCtrl.requestSongs();
-							commandCtrl.username(ipUser.getValue());
+							UsernameDialog usernameDialog = new UsernameDialog();
+							Optional<String> usernameResult = usernameDialog.showAndWait();
+							if (usernameResult.isPresent()) {
+								commandCtrl.username(usernameResult.get());
+							} else {
+								commandCtrl.username("guest" + (int) (100000.0 + (Math.random() * 899999.0)));
+							}
 							audioPlayer.start();
 							menuView.swapConnect();
 						}
 					} catch (NullPointerException e) {
 						e.printStackTrace();
 					}
-
-				});
-
+				}
 			};
 		});
 

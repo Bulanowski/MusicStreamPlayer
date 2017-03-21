@@ -13,9 +13,9 @@ import java.util.LinkedList;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import model.event_handling.PackageReceivedEvent;
 import model.event_handling.PackageReceivedListener;
-import javafx.scene.control.ButtonType;
 
 public class TCP implements Runnable {
 
@@ -23,18 +23,15 @@ public class TCP implements Runnable {
 	private Socket socket;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
-	private final LinkedList<PackageReceivedListener> packageReceivedListeners;
-
-	public TCP() {
-		packageReceivedListeners = new LinkedList<PackageReceivedListener>();
-	}
+	private final LinkedList<PackageReceivedListener> packageReceivedListeners = new LinkedList<PackageReceivedListener>();
 
 	public boolean connect(String host, int port) {
 		String alertMessage;
 		try {
 			socket = new Socket(host, port);
 			System.out.println("Connection established to " + host + " on port " + port);
-			open();
+			output = new ObjectOutputStream(socket.getOutputStream());
+			input = new ObjectInputStream(socket.getInputStream());
 			return true;
 		} catch (UnknownHostException e) {
 			alertMessage = "Unknown host address " + host + "!";
@@ -48,11 +45,6 @@ public class TCP implements Runnable {
 		Alert alert = new Alert(AlertType.ERROR, alertMessage, ButtonType.OK);
 		alert.showAndWait();
 		return false;
-	}
-
-	public void open() throws IOException {
-		output = new ObjectOutputStream(socket.getOutputStream());
-		input = new ObjectInputStream(socket.getInputStream());
 	}
 
 	public void addPackageReceivedListener(PackageReceivedListener packageReceivedListener) {
@@ -86,8 +78,10 @@ public class TCP implements Runnable {
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
+				stop();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
+				stop();
 			}
 		}
 	}

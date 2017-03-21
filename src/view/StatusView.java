@@ -19,6 +19,7 @@ public class StatusView {
 	private VolumeListener volumeListener;
 
 	public StatusView() {
+		// TODO: Display Song Information
 		statusBar = new VBox(10);
 		volumeSlider = new Slider();
 		statusBar.setAlignment(Pos.CENTER);

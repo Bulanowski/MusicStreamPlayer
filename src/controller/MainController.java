@@ -26,6 +26,7 @@ public class MainController {
 	private final StatusController statusCtrl;
 	private final ChatController chatBoxCtrl;
 	private final MenuController menuCtrl;
+	private final SlideTabPaneController slideCtrl;
 
 	public MainController(PrimaryView primaryView) {
 		// this.pv = primaryView;
@@ -44,8 +45,11 @@ public class MainController {
 				statusCtrl.setVolumeListener(ev.getVolumeListener());
 			}
 		});
-
+		
+		
+		
 		commandCtrl = new CommandController(tcp);
+		slideCtrl = new SlideTabPaneController(primaryView);
 		tableCtrl = new TableController(primaryView, commandCtrl);
 		treeCtrl = new TreeController(primaryView, tableCtrl);
 		statusCtrl = new StatusController(primaryView);

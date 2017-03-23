@@ -46,13 +46,13 @@ public class TableController {
 				final TableRow<Song> row = new TableRow<>();
 				final ContextMenu rowMenu = new ContextMenu();
 				MenuItem addToQueueItem = new MenuItem("Add To Queue");
-				addToQueueItem.setOnAction(new EventHandler<ActionEvent>() {
-
-					@Override
-					public void handle(ActionEvent event) {
-						commandCtrl.addToQueue(row.getItem().getPath());
+				row.setOnMouseClicked( event -> {
+					if(event.getClickCount() == 2 && ! row.isEmpty()) {
+						commandCtrl.addToQueue(songList.indexOf(row.getItem()));
 					}
-
+				});
+				addToQueueItem.setOnAction(event -> {
+						commandCtrl.addToQueue(songList.indexOf(row.getItem())); 
 				});
 				rowMenu.getItems().add(addToQueueItem);
 

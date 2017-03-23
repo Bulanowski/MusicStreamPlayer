@@ -7,6 +7,8 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineEvent;
+import javax.sound.sampled.LineListener;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -90,7 +92,6 @@ public class AudioPlayer implements Runnable {
 				SourceDataLine line = AudioSystem.getSourceDataLine(format);
 				line.open(format);
 				System.out.println("Opened line with buffer size " + line.getBufferSize());
-
 				float oldVolume = (volume != null ? volume.getValue() : 0.0f);
 				volume = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
 				volume.setValue(oldVolume);

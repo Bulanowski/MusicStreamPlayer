@@ -14,8 +14,8 @@ public class CommandController {
 		tcp.sendCommand("request_songs");
 	}
 	
-	public void addToQueue(String songPath) {
-		tcp.sendCommand("add_to_queue " + songPath);
+	public void addToQueue(int index) {
+		tcp.sendCommand("add_to_queue " + index);
 	}
 	
 	public void chat(String chatMessage) {

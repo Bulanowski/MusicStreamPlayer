@@ -12,13 +12,19 @@ public class Song implements Serializable, Comparable<Song>, Comparator<Song> {
 	private String album;
 	private String artist;
 	private int trackNumber;
+	private int id;
 
-	public Song(String path, String name, String album, String artist, int trackNumber) {
+	public Song(String path, int trackNumber) {
 		this.path = path;
-		this.name = name;
-		this.album = album;
-		this.artist = artist;
 		this.trackNumber = trackNumber;
+	}
+	
+	public void setID(int id) {
+		this.id = id;
+	}
+	
+	public int getID() {
+		return id;
 	}
 
 	public String getPath() {

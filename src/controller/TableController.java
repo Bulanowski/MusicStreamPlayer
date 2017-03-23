@@ -48,11 +48,11 @@ public class TableController {
 				MenuItem addToQueueItem = new MenuItem("Add To Queue");
 				row.setOnMouseClicked( event -> {
 					if(event.getClickCount() == 2 && ! row.isEmpty()) {
-						commandCtrl.addToQueue(songList.indexOf(row.getItem()));
+						commandCtrl.addToQueue(row.getItem().getID());
 					}
 				});
 				addToQueueItem.setOnAction(event -> {
-						commandCtrl.addToQueue(songList.indexOf(row.getItem())); 
+						commandCtrl.addToQueue(row.getItem().getID()); 
 				});
 				rowMenu.getItems().add(addToQueueItem);
 

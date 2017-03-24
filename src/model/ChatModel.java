@@ -2,32 +2,29 @@ package model;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.event_handling.ChatUpdateEvent;
-import model.event_handling.ChatUpdateListener;
 
-public class ChatModel {
-	private ChatDAO chatDAO;
-	private ObservableList<String> chatList;
-	
-	
+public class ChatModel implements Observer<String> {
+
+	private final ChatDAO source;
+	private final ObservableList<String> chatList;
+
 	public ChatModel(ChatDAO chatDAO) {
 		chatList = FXCollections.observableArrayList();
-		this.chatDAO = chatDAO;
-		
-		chatDAO.setChatUpdateListener(new ChatUpdateListener() {
-			
-			@Override
-			public void chatUpdated(ChatUpdateEvent ev) {
-				chatList.add(ev.getMsg());
-				
-			}
-		});
+		source = chatDAO;
+		source.register(this);
 	}
-	
+
+	public void clear() {
+		chatList.clear();
+	}
+
 	public ObservableList<String> getChatList() {
 		return chatList;
 	}
-	
-	
-	
+
+	@Override
+	public void update(String e) {
+		chatList.add(e);
+	}
+
 }

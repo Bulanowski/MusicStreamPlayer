@@ -2,6 +2,7 @@ package controller;
 
 import javafx.collections.ListChangeListener;
 import model.ChatModel;
+import model.CommandSender;
 import view.ChatBoxView;
 import view.ChatSendEvent;
 import view.ChatSendListener;
@@ -11,7 +12,7 @@ public class ChatController {
 
 	private ChatBoxView chatBoxView;
 
-	public ChatController(PrimaryView primaryView, CommandController commandCtrl) {
+	public ChatController(PrimaryView primaryView, CommandSender commandCtrl) {
 		chatBoxView = new ChatBoxView();
 
 		chatBoxView.setChatSendListener(new ChatSendListener() {

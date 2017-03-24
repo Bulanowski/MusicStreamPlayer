@@ -1,38 +1,32 @@
 package model;
 
+import java.util.List;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import model.event_handling.SongListUpdateEvent;
-import model.event_handling.SongListUpdateListener;
 
-public class SongModel {
+public class SongModel implements Observer<List<Song>> {
 
-	private final ObservableList<Song> songs;
 	private final SongDAO source;
+	private final ObservableList<Song> songList;
 
 	public SongModel(SongDAO songDAO) {
-		songs = FXCollections.observableArrayList();
+		songList = FXCollections.observableArrayList();
 		source = songDAO;
-		source.setSongListUpdateListener(new SongListUpdateListener() {
-
-			@Override
-			public void songListUpdate(SongListUpdateEvent ev) {
-				songs.addAll(ev.getSongList());
-			}
-
-		});
-	}
-	
-	public void requestSongs() {
-		source.requestSongs();
+		source.register(this);
 	}
 
 	public void clear() {
-		songs.clear();
+		songList.clear();
 	}
 
 	public ObservableList<Song> getSongs() {
-		return songs;
+		return songList;
+	}
+
+	@Override
+	public void update(List<Song> e) {
+		songList.addAll(e);
 	}
 
 }

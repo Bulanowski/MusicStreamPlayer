@@ -14,6 +14,7 @@ import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.Callback;
+import model.CommandSender;
 import model.Song;
 import model.SongModel;
 import model.TableFilter;
@@ -27,7 +28,7 @@ public class TableController {
 	private TableColumn<Song, String> album;
 
 	@SuppressWarnings("unchecked")
-	public TableController(PrimaryView primaryView, CommandController commandCtrl) {
+	public TableController(PrimaryView primaryView, CommandSender commandCtrl) {
 		table = new TableView<>();
 		table.setPlaceholder(new Label("No media"));
 		name = new TableColumn<>("Name");

@@ -4,12 +4,13 @@ import model.AudioDAO;
 import model.AudioPlayer;
 import model.ChatDAO;
 import model.ChatModel;
+import model.CommandSender;
+import model.Distributer;
 import model.SongDAO;
 import model.SongModel;
 import model.TCP;
-import model.TCPAudioDAO;
-import model.TCPChatDAO;
-import model.TCPSongDAO;
+import model.AudioDAO;
+import model.ChatDAO;
 import model.event_handling.AudioPlayingEvent;
 import model.event_handling.AudioPlayingListener;
 import view.PrimaryView;
@@ -17,10 +18,13 @@ import view.PrimaryView;
 public class MainController {
 	// private PrimaryView pv;
 	private final TCP tcp;
+	private final SongDAO songDAO;
+	private final AudioDAO audioDAO;
+	private final ChatDAO chatDAO;
 	private final SongModel songModel;
 	private final ChatModel chatModel;
 	private final AudioPlayer audioPlayer;
-	private final CommandController commandCtrl;
+	private final CommandSender commandCtrl;
 	private final TableController tableCtrl;
 	private final TreeController treeCtrl;
 	private final StatusController statusCtrl;
@@ -31,10 +35,12 @@ public class MainController {
 	public MainController(PrimaryView primaryView) {
 		// this.pv = primaryView;
 
-		tcp = new TCP();
-		SongDAO songDAO = new TCPSongDAO(tcp);
-		AudioDAO audioDAO = new TCPAudioDAO(tcp);
-		ChatDAO chatDAO = new TCPChatDAO(tcp);
+		
+		Distributer distributer = new Distributer();
+		tcp = new TCP(distributer);
+		songDAO = new SongDAO(distributer);
+		audioDAO = new AudioDAO(distributer);
+		chatDAO = new ChatDAO(distributer);
 		chatModel = new ChatModel(chatDAO);
 		songModel = new SongModel(songDAO);
 		audioPlayer = new AudioPlayer(audioDAO);
@@ -48,7 +54,7 @@ public class MainController {
 		
 		
 		
-		commandCtrl = new CommandController(tcp);
+		commandCtrl = new CommandSender(tcp, distributer);
 		slideCtrl = new SlideTabPaneController(primaryView);
 		tableCtrl = new TableController(primaryView, commandCtrl);
 		treeCtrl = new TreeController(primaryView, tableCtrl);
@@ -66,6 +72,10 @@ public class MainController {
 	public void onApplicationClosed() {
 		audioPlayer.stop();
 		tcp.disconnect();
+		commandCtrl.stop();
+		chatDAO.stop();
+		audioDAO.stop();
+		songDAO.stop();
 	}
 
 }

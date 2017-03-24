@@ -8,6 +8,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.input.MouseEvent;
 import model.AudioPlayer;
+import model.CommandSender;
 import model.SongModel;
 import model.TCP;
 import model.TableFilter;
@@ -23,7 +24,7 @@ public class MenuController {
 	private MenuView menuView;
 
 	public MenuController(PrimaryView primaryView, TreeController treeCtrl, TableController tableCtrl,
-			StatusController statusCtrl, CommandController commandCtrl, ChatController chatBoxCtrl, TCP tcp,
+			StatusController statusCtrl, CommandSender commandCtrl, ChatController chatBoxCtrl, TCP tcp,
 			SongModel songModel, AudioPlayer audioPlayer) {
 
 		menuView = new MenuView();

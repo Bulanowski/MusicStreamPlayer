@@ -1,21 +1,16 @@
 package model;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.LinkedList;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
-import model.event_handling.PackageReceivedEvent;
-import model.event_handling.PackageReceivedListener;
 
 public class TCP implements Runnable {
 
@@ -23,7 +18,11 @@ public class TCP implements Runnable {
 	private Socket socket;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
-	private final LinkedList<PackageReceivedListener> packageReceivedListeners = new LinkedList<PackageReceivedListener>();
+	private final Distributer distributer;
+
+	public TCP(Distributer distributer) {
+		this.distributer = distributer;
+	}
 
 	public boolean connect(String host, int port) {
 		String alertMessage;
@@ -47,14 +46,9 @@ public class TCP implements Runnable {
 		return false;
 	}
 
-	public void addPackageReceivedListener(PackageReceivedListener packageReceivedListener) {
-		packageReceivedListeners.add(packageReceivedListener);
-	}
-
 	public void start() {
 		if (thread == null) {
-			thread = new Thread(this);
-			thread.setName("TCP-Input");
+			thread = new Thread(this, "TCP-Input");
 			thread.start();
 			System.out.println("Starting " + thread.getName() + " Thread");
 		}
@@ -66,22 +60,18 @@ public class TCP implements Runnable {
 			try {
 				byte packageType = input.readByte();
 				Object information = input.readObject();
-				PackageReceivedEvent ev = new PackageReceivedEvent(this, packageType, information);
-				for (PackageReceivedListener listener : packageReceivedListeners) {
-					listener.readPackage(ev);
-				}
+				distributer.addToQueue(packageType, information);
 			} catch (SocketException e) {
 				if (socket.isClosed()) {
 					System.err.println(e.getMessage());
 				} else {
 					e.printStackTrace();
 				}
-			} catch (IOException e) {
+			} catch (ClassNotFoundException | IOException e) {
 				e.printStackTrace();
 				stop();
-			} catch (ClassNotFoundException e) {
+			} catch (InterruptedException e) {
 				e.printStackTrace();
-				stop();
 			}
 		}
 	}
@@ -110,26 +100,13 @@ public class TCP implements Runnable {
 
 	public synchronized void sendCommand(String command) {
 		try {
-			output.writeUTF(command);
-			output.flush();
-			System.out.println(command);
-		} catch (SocketException e) {
-			if (socket.isClosed()) {
-				System.err.println(e.getMessage());
-			} else {
-				e.printStackTrace();
+			if (socket != null && !socket.isClosed()) {
+				output.writeUTF(command);
+				output.flush();
+				System.out.println(command);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-	public InputStream getInputStream() throws IOException {
-		return socket.getInputStream();
-	}
-
-	public OutputStream getOutputStream() throws IOException {
-		return socket.getOutputStream();
-	}
-
 }

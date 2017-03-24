@@ -1,7 +1,7 @@
 package model;
 
 public enum PackageType {
-	SONG_LIST(Byte.valueOf("1")), BUFFER_SIZE(Byte.valueOf("2")), AUDIO(Byte.valueOf("3")), CHAT(Byte.valueOf("4"));
+	COMMAND(Byte.valueOf("0")), SONG_LIST(Byte.valueOf("1")), SONG_INFO(Byte.valueOf("2")), AUDIO(Byte.valueOf("3")), CHAT(Byte.valueOf("4"));
 
 	private byte type;
 

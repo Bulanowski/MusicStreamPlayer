@@ -9,8 +9,6 @@ import model.Distributer;
 import model.SongDAO;
 import model.SongModel;
 import model.TCP;
-import model.event_handling.AudioPlayingEvent;
-import model.event_handling.AudioPlayingListener;
 import view.PrimaryView;
 
 public class MainController {
@@ -42,12 +40,12 @@ public class MainController {
 		songModel = new SongModel(songDAO);
 		audioPlayer = new AudioPlayer(audioDAO);
 
-		audioPlayer.setAudioPlayingListener(new AudioPlayingListener() {
-			@Override
-			public void AudioOn(AudioPlayingEvent ev) {
-				statusCtrl.setVolumeListener(ev.getVolumeListener());
-			}
-		});
+//		audioPlayer.setAudioPlayingListener(new AudioPlayingListener() {
+//			@Override
+//			public void AudioOn(AudioPlayingEvent ev) {
+//				statusCtrl.setVolumeListener(ev.getVolumeListener());
+//			}
+//		});
 
 		commandCtrl = new CommandSender(tcp, distributer);
 		slideCtrl = new SlideTabPaneController(primaryView);
@@ -58,6 +56,7 @@ public class MainController {
 		menuCtrl = new MenuController(primaryView, treeCtrl, tableCtrl, statusCtrl, commandCtrl, chatBoxCtrl, tcp,
 				songModel, audioPlayer);
 
+		statusCtrl.addVolumeListener(audioPlayer.getVolumeChangeListener());
 		tableCtrl.addSongModelListChangeListener(songModel);
 		treeCtrl.addSongModelListChangeListener(songModel);
 		statusCtrl.addSongModelListChangeListener(songModel);

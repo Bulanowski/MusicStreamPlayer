@@ -11,10 +11,8 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import model.event_handling.AudioPlayingEvent;
-import model.event_handling.AudioPlayingListener;
-import model.event_handling.VolumeEvent;
-import model.event_handling.VolumeListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 public class AudioPlayer implements Runnable {
 
@@ -22,12 +20,26 @@ public class AudioPlayer implements Runnable {
 	private Playback playback;
 	private final AudioDAO audioDAO;
 	private FloatControl volume;
-	private AudioPlayingListener audioPlayingListener;
-	private VolumeListener volumeListener;
+	private ChangeListener<Number> volumeChangeListener;
+//	private AudioPlayingListener audioPlayingListener;
+//	private VolumeListener volumeListener;
 	private volatile boolean bForceStop = false;
 
 	public AudioPlayer(AudioDAO audioDAO) {
 		this.audioDAO = audioDAO;
+		buildVolumeChangeListener();
+	}
+	
+	private void buildVolumeChangeListener() {
+		volumeChangeListener = new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				System.out.println("Volume changed to " + newValue);
+				if (volume != null) {
+					volume.setValue(newValue.floatValue());
+				}
+			}
+		};
 	}
 
 	public void start() {
@@ -69,12 +81,16 @@ public class AudioPlayer implements Runnable {
 		}
 	}
 
-	public void setAudioPlayingListener(AudioPlayingListener audioPlayingListener) {
-		this.audioPlayingListener = audioPlayingListener;
-	}
+//	public void setAudioPlayingListener(AudioPlayingListener audioPlayingListener) {
+//		this.audioPlayingListener = audioPlayingListener;
+//	}
 
 	public void forceStop() {
 		bForceStop = true;
+	}
+	
+	public ChangeListener<Number> getVolumeChangeListener() {
+		return volumeChangeListener;
 	}
 
 	class Playback {
@@ -93,18 +109,18 @@ public class AudioPlayer implements Runnable {
 				float oldVolume = (volume != null ? volume.getValue() : 0.0f);
 				volume = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
 				volume.setValue(oldVolume);
-				volumeListener = new VolumeListener() {
-
-					@Override
-					public void volumeChanged(VolumeEvent ev) {
-						volume.setValue(ev.getVolumeChange());
-
-					}
-				};
-				if (audioPlayingListener != null) {
-					AudioPlayingEvent ev = new AudioPlayingEvent(this, volumeListener);
-					audioPlayingListener.AudioOn(ev);
-				}
+//				volumeListener = new VolumeListener() {
+//
+//					@Override
+//					public void volumeChanged(VolumeEvent ev) {
+//						volume.setValue(ev.getVolumeChange());
+//
+//					}
+//				};
+//				if (audioPlayingListener != null) {
+//					AudioPlayingEvent ev = new AudioPlayingEvent(this, volumeListener);
+//					audioPlayingListener.AudioOn(ev);
+//				}
 				
 				// rawplay
 				byte[] buffer = new byte[256];

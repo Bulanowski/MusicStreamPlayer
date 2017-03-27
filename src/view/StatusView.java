@@ -1,7 +1,6 @@
 package view;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -9,14 +8,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import model.event_handling.VolumeEvent;
-import model.event_handling.VolumeListener;
 
 public class StatusView {
 	private VBox statusBar;
 	private Text numberOfItems;
 	private Slider volumeSlider;
-	private VolumeListener volumeListener;
+//	private VolumeListener volumeListener;
 
 	public StatusView() {
 		// TODO: Display Song Information
@@ -28,15 +25,15 @@ public class StatusView {
 		volumeSlider.setMax(6);
 		volumeSlider.setMaxWidth(200);
 		volumeSlider.setValue(0);
-		volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
-			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-				VolumeEvent ev = new VolumeEvent(this, new_val.floatValue());
-				if (volumeListener != null) {
-					volumeListener.volumeChanged(ev);
-
-				}
-			}
-		});
+//		volumeSlider.valueProperty().addListener(new ChangeListener<Number>() {
+//			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+//				VolumeEvent ev = new VolumeEvent(this, new_val.floatValue());
+//				if (volumeListener != null) {
+//					volumeListener.volumeChanged(ev);
+//
+//				}
+//			}
+//		});
 
 	}
 
@@ -57,8 +54,12 @@ public class StatusView {
 		}
 	}
 
-	public void setVolumeListener(VolumeListener volumeListener) {
-		this.volumeListener = volumeListener;
+//	public void setVolumeListener(VolumeListener volumeListener) {
+//		this.volumeListener = volumeListener;
+//	}
+	
+	public void addVolumeListener(ChangeListener<Number> listener) {
+		volumeSlider.valueProperty().addListener(listener);
 	}
 
 	public Node getNode() {

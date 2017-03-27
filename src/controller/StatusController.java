@@ -1,10 +1,10 @@
 package controller;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.ListChangeListener;
 import model.Song;
 import model.SongModel;
-import model.event_handling.VolumeListener;
 import view.PrimaryView;
 import view.StatusView;
 
@@ -33,7 +33,11 @@ public class StatusController {
 		});
 	}
 	
-	public void setVolumeListener(VolumeListener volumeListener) {
-		sv.setVolumeListener(volumeListener);
+	public void addVolumeListener(ChangeListener<Number> listener) {
+		sv.addVolumeListener(listener);
 	}
+	
+//	public void setVolumeListener(VolumeListener volumeListener) {
+//		sv.setVolumeListener(volumeListener);
+//	}
 }

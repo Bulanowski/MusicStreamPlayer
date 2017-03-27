@@ -59,7 +59,9 @@ public class TCP implements Runnable {
 		while (thread != null) {
 			try {
 				byte packageType = input.readByte();
+				System.out.print("Got package type " + packageType);
 				Object information = input.readObject();
+				System.out.println(" with value " + information);
 				distributer.addToQueue(packageType, information);
 			} catch (SocketException e) {
 				if (socket.isClosed()) {

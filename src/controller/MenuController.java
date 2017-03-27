@@ -1,7 +1,10 @@
 package controller;
 
 import java.util.Optional;
+import java.util.Random;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -12,8 +15,6 @@ import model.CommandSender;
 import model.SongModel;
 import model.TCP;
 import model.TableFilter;
-import model.event_handling.SearchChangedEvent;
-import model.event_handling.SearchChangedListener;
 import view.ConnectDialog;
 import view.MenuView;
 import view.PrimaryView;
@@ -46,7 +47,8 @@ public class MenuController {
 							if (usernameResult.isPresent()) {
 								commandCtrl.username(usernameResult.get());
 							} else {
-								commandCtrl.username("guest" + (int) (100000.0 + (Math.random() * 899999.0)));
+								Random rand = new Random();
+								commandCtrl.username("guest" + (100000 + rand.nextInt(899999)));
 							}
 							audioPlayer.start();
 							menuView.swapConnect();
@@ -92,13 +94,11 @@ public class MenuController {
 
 		});
 
-		menuView.setSearchChangedListener(new SearchChangedListener() {
-
+		menuView.addSearchChangedListener(new ChangeListener<String>() {
 			@Override
-			public void searchChanged(SearchChangedEvent event) {
-				tableCtrl.applyFilter(event.getSearchText(), TableFilter.ALL);
+			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				tableCtrl.applyFilter(newValue, TableFilter.ALL);
 			}
-
 		});
 
 		primaryView.setTop(menuView.getNode());

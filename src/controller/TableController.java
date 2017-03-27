@@ -4,8 +4,6 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -47,13 +45,13 @@ public class TableController {
 				final TableRow<Song> row = new TableRow<>();
 				final ContextMenu rowMenu = new ContextMenu();
 				MenuItem addToQueueItem = new MenuItem("Add To Queue");
-				row.setOnMouseClicked( event -> {
-					if(event.getClickCount() == 2 && ! row.isEmpty()) {
+				row.setOnMouseClicked(event -> {
+					if (event.getClickCount() == 2 && !row.isEmpty()) {
 						commandCtrl.addToQueue(row.getItem().getID());
 					}
 				});
 				addToQueueItem.setOnAction(event -> {
-						commandCtrl.addToQueue(row.getItem().getID()); 
+					commandCtrl.addToQueue(row.getItem().getID());
 				});
 				rowMenu.getItems().add(addToQueueItem);
 

@@ -1,18 +1,20 @@
 package controller;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
 import model.AudioDAO;
 import model.AudioPlayer;
 import model.ChatDAO;
 import model.ChatModel;
 import model.CommandSender;
-import model.Distributer;
+import model.Distributor;
 import model.SongDAO;
 import model.SongModel;
 import model.TCP;
 import view.PrimaryView;
 
-public class MainController {
-	// private PrimaryView pv;
+public class MainController extends Application{
+	private final PrimaryView primaryView;
 	private final TCP tcp;
 	private final SongDAO songDAO;
 	private final AudioDAO audioDAO;
@@ -28,26 +30,19 @@ public class MainController {
 	private final MenuController menuCtrl;
 	private final SlideTabPaneController slideCtrl;
 
-	public MainController(PrimaryView primaryView) {
-		// this.pv = primaryView;
+	public MainController(Stage primaryStage) {
+		primaryView = new PrimaryView(primaryStage);
 
-		Distributer distributer = new Distributer();
-		tcp = new TCP(distributer);
-		songDAO = new SongDAO(distributer);
-		audioDAO = new AudioDAO(distributer);
-		chatDAO = new ChatDAO(distributer);
+		Distributor distributor = new Distributor();
+		tcp = new TCP(distributor);
+		songDAO = new SongDAO(distributor);
+		audioDAO = new AudioDAO(distributor);
+		chatDAO = new ChatDAO(distributor);
 		chatModel = new ChatModel(chatDAO);
 		songModel = new SongModel(songDAO);
 		audioPlayer = new AudioPlayer(audioDAO);
 
-//		audioPlayer.setAudioPlayingListener(new AudioPlayingListener() {
-//			@Override
-//			public void AudioOn(AudioPlayingEvent ev) {
-//				statusCtrl.setVolumeListener(ev.getVolumeListener());
-//			}
-//		});
-
-		commandCtrl = new CommandSender(tcp, distributer);
+		commandCtrl = new CommandSender(tcp, distributor);
 		slideCtrl = new SlideTabPaneController(primaryView);
 		tableCtrl = new TableController(primaryView, commandCtrl);
 		treeCtrl = new TreeController(primaryView, tableCtrl);
@@ -72,4 +67,13 @@ public class MainController {
 		songDAO.stop();
 	}
 
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		new MainController(primaryStage);
+		primaryStage.setOnCloseRequest(e -> onApplicationClosed());
+	}
+
+	public static void main(String[] args) {
+		launch();
+	}
 }

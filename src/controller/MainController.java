@@ -1,19 +1,10 @@
 package controller;
 
-import javafx.application.Application;
 import javafx.stage.Stage;
-import model.AudioDAO;
-import model.AudioPlayer;
-import model.ChatDAO;
-import model.ChatModel;
-import model.CommandSender;
-import model.Distributor;
-import model.SongDAO;
-import model.SongModel;
-import model.TCP;
+import model.*;
 import view.PrimaryView;
 
-public class MainController extends Application{
+public class MainController {
 	private final PrimaryView primaryView;
 	private final TCP tcp;
 	private final SongDAO songDAO;
@@ -30,7 +21,7 @@ public class MainController extends Application{
 	private final MenuController menuCtrl;
 	private final SlideTabPaneController slideCtrl;
 
-	private MainController(Stage primaryStage) {
+	public MainController(Stage primaryStage) {
 		primaryView = new PrimaryView(primaryStage);
 
 		Distributor distributor = new Distributor();
@@ -58,22 +49,12 @@ public class MainController extends Application{
 		chatBoxCtrl.addChatModelChangedListener(chatModel);
 	}
 
-	private void onApplicationClosed() {
+	public void onApplicationClosed() {
 		audioPlayer.stop();
 		tcp.disconnect();
 		commandCtrl.stop();
 		chatDAO.stop();
 		audioDAO.stop();
 		songDAO.stop();
-	}
-
-	@Override
-	public void start(Stage primaryStage) throws Exception {
-		new MainController(primaryStage);
-		primaryStage.setOnCloseRequest(e -> onApplicationClosed());
-	}
-
-	public static void main(String[] args) {
-		launch();
 	}
 }

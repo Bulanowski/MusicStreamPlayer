@@ -86,7 +86,7 @@ public class AudioDAO implements Runnable {
         return playing;
     }
 
-    private void startPlaying() {
+    private synchronized void startPlaying() {
         System.out.println("Start playing");
         playing = true;
         notifyAll();

@@ -6,12 +6,12 @@ import java.util.List;
 public class SongDAO implements Runnable, Observable<List<Song>> {
 
 	private Thread thread;
-	private final Distributer distributer;
+	private final Distributor distributor;
 	private final ArrayList<Observer<List<Song>>> observers = new ArrayList<>();
 	private List<Song> songList;
 
-	public SongDAO(Distributer distributer) {
-		this.distributer = distributer;
+	public SongDAO(Distributor distributor) {
+		this.distributor = distributor;
 		start();
 	}
 
@@ -28,7 +28,7 @@ public class SongDAO implements Runnable, Observable<List<Song>> {
 	public void run() {
 		while (thread != null) {
 			try {
-				Object objectReceived = distributer.getFromQueue(PackageType.SONG_LIST);
+				Object objectReceived = distributor.getFromQueue(PackageType.SONG_LIST);
 				if (objectReceived instanceof List) {
 					songList = (List<Song>) objectReceived;
 					notifyObservers();

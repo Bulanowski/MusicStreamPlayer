@@ -18,10 +18,10 @@ public class TCP implements Runnable {
 	private Socket socket;
 	private ObjectOutputStream output;
 	private ObjectInputStream input;
-	private final Distributer distributer;
+	private final Distributor distributor;
 
-	public TCP(Distributer distributer) {
-		this.distributer = distributer;
+	public TCP(Distributor distributor) {
+		this.distributor = distributor;
 	}
 
 	public boolean connect(String host, int port) {
@@ -60,7 +60,7 @@ public class TCP implements Runnable {
 			try {
 				byte packageType = input.readByte();
 				Object information = input.readObject();
-				distributer.addToQueue(packageType, information);
+				distributor.addToQueue(packageType, information);
 			} catch (SocketException e) {
 				if (socket.isClosed()) {
 					System.err.println(e.getMessage());

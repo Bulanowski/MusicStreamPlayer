@@ -4,11 +4,11 @@ public class CommandSender implements Runnable {
 	
 	private Thread thread;
 	private final TCP tcp;
-	private final Distributer distributer;
+	private final Distributor distributor;
 	
-	public CommandSender(TCP tcp, Distributer distributer) {
+	public CommandSender(TCP tcp, Distributor distributor) {
 		this.tcp = tcp;
-		this.distributer = distributer;
+		this.distributor = distributor;
 		start();
 	}
 	
@@ -44,7 +44,7 @@ public class CommandSender implements Runnable {
 	public void run() {
 		while (thread != null) {
 			try {
-				Object objectReceived = distributer.getFromQueue(PackageType.COMMAND);
+				Object objectReceived = distributor.getFromQueue(PackageType.COMMAND);
 				if (objectReceived instanceof String) {
 					String command = (String) objectReceived;
 					switch (command) {

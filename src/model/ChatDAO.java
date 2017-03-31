@@ -5,12 +5,12 @@ import java.util.ArrayList;
 public class ChatDAO implements Runnable, Observable<String> {
 
 	private Thread thread;
-	private final Distributer distributer;
+	private final Distributor distributor;
 	private final ArrayList<Observer<String>> observers = new ArrayList<>();
 	private String chatMessage;
 
-	public ChatDAO(Distributer distributer) {
-		this.distributer = distributer;
+	public ChatDAO(Distributor distributor) {
+		this.distributor = distributor;
 		start();
 	}
 
@@ -26,7 +26,7 @@ public class ChatDAO implements Runnable, Observable<String> {
 	public void run() {
 		while (thread != null) {
 			try {
-				Object objectReceived = distributer.getFromQueue(PackageType.CHAT);
+				Object objectReceived = distributor.getFromQueue(PackageType.CHAT);
 				if (objectReceived instanceof String) {
 					chatMessage = (String) objectReceived;
 					notifyObservers();

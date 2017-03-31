@@ -7,7 +7,7 @@ import javafx.util.Pair;
 public class AudioDAO implements Runnable {
 	
 	private Thread thread;
-	private final Distributer distributer;
+	private final Distributor distributor;
 	private ByteBuffer byteBuffer;
 	private byte[] audioBuffer;
 	private int size = 0;
@@ -16,8 +16,8 @@ public class AudioDAO implements Runnable {
 	private volatile boolean gotSongInfo = false;
 	private final double BUFFER_PERCENTAGE = 0.05; // default = 0.05
 	
-	public AudioDAO(Distributer distributer) {
-		this.distributer = distributer;
+	public AudioDAO(Distributor distributor) {
+		this.distributor = distributor;
 		start();
 	}
 	
@@ -36,14 +36,14 @@ public class AudioDAO implements Runnable {
 			try {
 				Object objectReceived;
 				if (!gotSongInfo) {
-					objectReceived = distributer.getFromQueue(PackageType.SONG_INFO);
+					objectReceived = distributor.getFromQueue(PackageType.SONG_INFO);
 					if (objectReceived instanceof Pair) {
 						Pair<Integer, Song> sizeAndSong = (Pair<Integer, Song>) objectReceived;
 						resetVars(sizeAndSong.getKey());
 						gotSongInfo = true;
 					}
 				} else {
-					objectReceived = distributer.getFromQueue(PackageType.AUDIO);
+					objectReceived = distributor.getFromQueue(PackageType.AUDIO);
 					if (objectReceived instanceof byte[]) {
 						byte[] buffer = (byte[]) objectReceived;
 						addToAudioBuffer(buffer);
@@ -95,7 +95,7 @@ public class AudioDAO implements Runnable {
 		playing = false;
 		gotSongInfo = false;
 		try {
-			distributer.addToQueue(PackageType.COMMAND.getByte(), "songEnd");
+			distributor.addToQueue(PackageType.COMMAND.getByte(), "songEnd");
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

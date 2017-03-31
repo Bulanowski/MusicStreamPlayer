@@ -59,9 +59,7 @@ public class TCP implements Runnable {
 		while (thread != null) {
 			try {
 				byte packageType = input.readByte();
-				System.out.print("Got package type " + packageType);
 				Object information = input.readObject();
-				System.out.println(" with value " + information);
 				distributer.addToQueue(packageType, information);
 			} catch (SocketException e) {
 				if (socket.isClosed()) {
@@ -97,7 +95,7 @@ public class TCP implements Runnable {
 	}
 
 	public boolean isConnected() {
-		return (socket != null ? socket.isConnected() : false);
+		return (socket != null && socket.isConnected());
 	}
 
 	public synchronized void sendCommand(String command) {

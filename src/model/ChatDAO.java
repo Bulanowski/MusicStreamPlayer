@@ -1,64 +1,45 @@
 package model;
 
-import java.util.ArrayList;
+import java.util.Observable;
 
-public class ChatDAO implements Runnable, Observable<String> {
+public class ChatDAO extends Observable implements Runnable {
 
 	private Thread thread;
 	private final Distributor distributor;
-	private final ArrayList<Observer<String>> observers = new ArrayList<>();
-	private String chatMessage;
 
 	public ChatDAO(Distributor distributor) {
 		this.distributor = distributor;
-		start();
 	}
 
 	public void start() {
 		if (thread == null) {
-			thread = new Thread(this, "ChatDAO");
+			thread = new Thread(this, "ChatDAO-Thread");
 			thread.start();
-			System.out.println("Starting " + thread.getName() + " Thread");
+			System.out.println("Starting " + thread.getName());
 		}
 	}
 
 	@Override
 	public void run() {
-		while (thread != null) {
-			try {
+		try {
+			while (!thread.isInterrupted()) {
 				Object objectReceived = distributor.getFromQueue(PackageType.CHAT);
 				if (objectReceived instanceof String) {
-					chatMessage = (String) objectReceived;
-					notifyObservers();
+					setChanged();
+					notifyObservers(objectReceived);
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
+		} catch (InterruptedException e) {
+//			System.err.println(thread.getName() + " was interrupted");
+		} finally {
+			thread = null;
 		}
 	}
 
 	public void stop() {
 		if (thread != null) {
-			System.out.println("Stopping " + thread.getName() + " Thread");
-			thread = null;
-		}
-	}
-
-	@Override
-	public void register(Observer<String> o) {
-		observers.add(o);
-	}
-
-	@Override
-	public void unregister(Observer<String> o) {
-		int i = observers.indexOf(o);
-		observers.remove(i);
-	}
-
-	@Override
-	public void notifyObservers() {
-		for (Observer<String> o : observers) {
-			o.update(chatMessage);
+			System.out.println("Stopping " + thread.getName());
+			thread.interrupt();
 		}
 	}
 

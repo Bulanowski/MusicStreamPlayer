@@ -12,7 +12,6 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 public class AudioPlayer implements Runnable {
 
@@ -20,26 +19,19 @@ public class AudioPlayer implements Runnable {
 	private Playback playback;
 	private final AudioDAO audioDAO;
 	private FloatControl volume;
-	private ChangeListener<Number> volumeChangeListener;
-//	private AudioPlayingListener audioPlayingListener;
+	private final ChangeListener<Number> volumeChangeListener;
+	//	private AudioPlayingListener audioPlayingListener;
 //	private VolumeListener volumeListener;
 	private volatile boolean bForceStop = false;
 
 	public AudioPlayer(AudioDAO audioDAO) {
 		this.audioDAO = audioDAO;
-		buildVolumeChangeListener();
-	}
-	
-	private void buildVolumeChangeListener() {
-		volumeChangeListener = new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				System.out.println("Volume changed to " + newValue);
-				if (volume != null) {
-					volume.setValue(newValue.floatValue());
-				}
-			}
-		};
+		volumeChangeListener = (observable, oldValue, newValue) -> {
+            if (volume != null) {
+                volume.setValue(newValue.floatValue());
+            }
+        };
+		audioDAO.start();
 	}
 
 	public void start() {
@@ -54,19 +46,20 @@ public class AudioPlayer implements Runnable {
 
 	@Override
 	public void run() {
-		while (thread != null) {
-			try {
-				if (audioDAO.getPlaying()) {
-					Thread.sleep(1000);
-					System.out.println("Playing");
-					playback = new Playback();
-					playback.start();
-					audioDAO.stopPlaying();
+		try {
+			while (thread != null) {
+				synchronized (audioDAO) {
+					while (!audioDAO.getPlaying()) {
+						audioDAO.wait();
+					}
 				}
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				System.err.println(thread.getName() + " was interrupted");
+				System.out.println("Playing");
+				playback = new Playback();
+				playback.start();
+				audioDAO.stopPlaying();
 			}
+		} catch (InterruptedException e) {
+//			System.err.println(thread.getName() + " was interrupted");
 		}
 	}
 
@@ -77,6 +70,7 @@ public class AudioPlayer implements Runnable {
 		}
 		if (thread != null) {
 			System.out.println("Stopping " + thread.getName() + " Thread");
+			thread.interrupt();
 			thread = null;
 		}
 	}
@@ -85,10 +79,10 @@ public class AudioPlayer implements Runnable {
 //		this.audioPlayingListener = audioPlayingListener;
 //	}
 
-	public void forceStop() {
+	private void forceStop() {
 		bForceStop = true;
 	}
-	
+
 	public ChangeListener<Number> getVolumeChangeListener() {
 		return volumeChangeListener;
 	}
@@ -121,7 +115,7 @@ public class AudioPlayer implements Runnable {
 //					AudioPlayingEvent ev = new AudioPlayingEvent(this, volumeListener);
 //					audioPlayingListener.AudioOn(ev);
 //				}
-				
+
 				// rawplay
 				byte[] buffer = new byte[256];
 
@@ -147,11 +141,7 @@ public class AudioPlayer implements Runnable {
 				}
 				// end rawplay
 //				in.close();
-			} catch (UnsupportedAudioFileException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (LineUnavailableException e) {
+			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
 				e.printStackTrace();
 			}
 		}

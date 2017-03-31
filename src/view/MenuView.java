@@ -12,12 +12,12 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 public class MenuView {
-	private HBox menuBar;
-	private Menu connect;
-	private Label connectLabel;
-	private Label disconnectLabel;
-	private Label chatLabel;
-	private TextField searchField;
+	private final HBox menuBar;
+	private final Menu connect;
+	private final Label connectLabel;
+	private final Label disconnectLabel;
+	private final Label chatLabel;
+	private final TextField searchField;
 
 	public MenuView() {
 

@@ -30,7 +30,7 @@ public class MainController extends Application{
 	private final MenuController menuCtrl;
 	private final SlideTabPaneController slideCtrl;
 
-	public MainController(Stage primaryStage) {
+	private MainController(Stage primaryStage) {
 		primaryView = new PrimaryView(primaryStage);
 
 		Distributor distributor = new Distributor();
@@ -47,9 +47,9 @@ public class MainController extends Application{
 		tableCtrl = new TableController(primaryView, commandCtrl);
 		treeCtrl = new TreeController(primaryView, tableCtrl);
 		statusCtrl = new StatusController(primaryView);
-		chatBoxCtrl = new ChatController(primaryView, commandCtrl);
-		menuCtrl = new MenuController(primaryView, treeCtrl, tableCtrl, statusCtrl, commandCtrl, chatBoxCtrl, tcp,
-				songModel, audioPlayer);
+		chatBoxCtrl = new ChatController(commandCtrl);
+		menuCtrl = new MenuController(primaryView, treeCtrl, tableCtrl, commandCtrl, chatBoxCtrl, tcp,
+				songModel, chatModel, audioPlayer);
 
 		statusCtrl.addVolumeListener(audioPlayer.getVolumeChangeListener());
 		tableCtrl.addSongModelListChangeListener(songModel);
@@ -58,7 +58,7 @@ public class MainController extends Application{
 		chatBoxCtrl.addChatModelChangedListener(chatModel);
 	}
 
-	public void onApplicationClosed() {
+	private void onApplicationClosed() {
 		audioPlayer.stop();
 		tcp.disconnect();
 		commandCtrl.stop();

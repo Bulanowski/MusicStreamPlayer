@@ -55,7 +55,7 @@ public class Song implements Serializable, Comparable<Song>, Comparator<Song> {
 		this.artist = artist;
 	}
 
-	public int getTrackNumber() {
+	private int getTrackNumber() {
 		return trackNumber;
 	}
 

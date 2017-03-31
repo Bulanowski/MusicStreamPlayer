@@ -10,9 +10,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 public class StatusView {
-	private VBox statusBar;
+	private final VBox statusBar;
 	private Text numberOfItems;
-	private Slider volumeSlider;
+	private final Slider volumeSlider;
 //	private VolumeListener volumeListener;
 
 	public StatusView() {
@@ -47,7 +47,7 @@ public class StatusView {
 		statusBar.getChildren().addAll(new Label(artistName), new Label(songName), volumeSlider);
 	}
 
-	public void resetStatusBar() {
+	private void resetStatusBar() {
 		statusBar.getChildren().clear();
 		if (numberOfItems != null) {
 			statusBar.getChildren().addAll(numberOfItems, volumeSlider);

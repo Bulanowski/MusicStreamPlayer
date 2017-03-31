@@ -13,9 +13,10 @@ import javafx.stage.Stage;
 
 public class ChatBoxView {
 	
-	private Stage stage;
-	private BorderPane pane;
-	private TextArea chatArea;
+	private final Stage stage;
+	private final BorderPane pane;
+	private final TextArea chatArea;
+	private final TextField messageField;
 	private ChatSendListener chatSendListener;
 	
 	public ChatBoxView() {
@@ -31,32 +32,29 @@ public class ChatBoxView {
 		HBox messageBox = new HBox(10);
 		messageBox.setPadding(new Insets(5));
 		
-		TextField messageField = new TextField();
+		messageField = new TextField();
 		messageField.setOnKeyReleased(e -> {
-			if (e.getCode() == KeyCode.ENTER) {
-				ChatSendEvent event = new ChatSendEvent(this, messageField.getText());
-				if (chatSendListener != null) {
-					chatSendListener.chatSend(event);
-					messageField.clear();
-				}
-			}
+			if (e.getCode() == KeyCode.ENTER)
+				sendChat();
 		});
 		HBox.setHgrow(messageField, Priority.SOMETIMES);
 		
 		Button sendButton = new Button("Send");
-		sendButton.setOnAction(e -> {
-			ChatSendEvent event = new ChatSendEvent(this, messageField.getText());
-			if (chatSendListener != null) {
-				chatSendListener.chatSend(event);
-				messageField.clear();
-			}
-		});
+		sendButton.setOnAction(e -> sendChat());
 		
 		messageBox.getChildren().addAll(messageField, sendButton);
 		
 		pane.setBottom(messageBox);
 		
 		stage.setScene(new Scene(pane, pane.getPrefHeight(), pane.getPrefWidth()));
+	}
+
+	private void sendChat() {
+		ChatSendEvent event = new ChatSendEvent(this, messageField.getText());
+		if (chatSendListener != null) {
+			chatSendListener.chatSend(event);
+			messageField.clear();
+		}
 	}
 	
 	public void setChatSendListener(ChatSendListener chatSendListener) {

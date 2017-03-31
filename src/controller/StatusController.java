@@ -8,8 +8,8 @@ import model.SongModel;
 import view.PrimaryView;
 import view.StatusView;
 
-public class StatusController {
-	private StatusView sv;
+class StatusController {
+	private final StatusView sv;
 
 	public StatusController(PrimaryView primaryView) {
 		sv = new StatusView();
@@ -18,26 +18,10 @@ public class StatusController {
 	}
 	
 	public void addSongModelListChangeListener(SongModel songModel) {
-		songModel.getSongs().addListener(new ListChangeListener<Song>(){
-
-			@Override
-			public void onChanged(Change<? extends Song> change) {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
-						sv.setSongCount(songModel.getSongs().size());
-					}
-				});
-			}
-			
-		});
+		songModel.getSongs().addListener((ListChangeListener<Song>) change -> Platform.runLater(() -> sv.setSongCount(songModel.getSongs().size())));
 	}
 	
 	public void addVolumeListener(ChangeListener<Number> listener) {
 		sv.addVolumeListener(listener);
 	}
-	
-//	public void setVolumeListener(VolumeListener volumeListener) {
-//		sv.setVolumeListener(volumeListener);
-//	}
 }

@@ -6,7 +6,7 @@ import javafx.scene.control.TabPane;
 import view.PrimaryView;
 import view.SlideTabPane;
 
-public class SlideTabPaneController {
+class SlideTabPaneController {
 	
 	public SlideTabPaneController(PrimaryView primaryView) {
 		SlideTabPane slidePane = new SlideTabPane();

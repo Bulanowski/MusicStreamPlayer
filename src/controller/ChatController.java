@@ -4,38 +4,22 @@ import javafx.collections.ListChangeListener;
 import model.ChatModel;
 import model.CommandSender;
 import view.ChatBoxView;
-import view.ChatSendEvent;
-import view.ChatSendListener;
-import view.PrimaryView;
 
-public class ChatController {
+class ChatController {
 
-	private ChatBoxView chatBoxView;
+    private final ChatBoxView chatBoxView;
 
-	public ChatController(PrimaryView primaryView, CommandSender commandCtrl) {
-		chatBoxView = new ChatBoxView();
+    ChatController(CommandSender commandCtrl) {
+        chatBoxView = new ChatBoxView();
+        chatBoxView.setChatSendListener(event -> commandCtrl.chat(event.getMessageText()));
+    }
 
-		chatBoxView.setChatSendListener(new ChatSendListener() {
+    void show() {
+        chatBoxView.show();
+    }
 
-			@Override
-			public void chatSend(ChatSendEvent event) {
-				commandCtrl.chat(event.getMessageText());
-			}
-
-		});
-	}
-
-	public void show() {
-		chatBoxView.show();
-	}
-
-	public void addChatModelChangedListener(ChatModel chat) {
-		chat.getChatList().addListener(new ListChangeListener<String>() {
-			@Override
-			public void onChanged(Change<? extends String> change) {
-				chatBoxView.addMessage(chat.getChatList().remove(0));
-			}
-		});
-	}
+    void addChatModelChangedListener(ChatModel chat) {
+        chat.getChatList().addListener((ListChangeListener<String>) change -> chatBoxView.addMessage(chat.getChatList().remove(0)));
+    }
 
 }

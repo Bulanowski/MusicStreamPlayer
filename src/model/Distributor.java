@@ -9,7 +9,7 @@ public class Distributor {
 
 	public Distributor() {
 		for (PackageType p : PackageType.values()) {
-			queueList.add(p.getByte(), new LinkedBlockingQueue<Object>(50));
+			queueList.add(p.getByte(), new LinkedBlockingQueue<>(50));
 		}
 	}
 

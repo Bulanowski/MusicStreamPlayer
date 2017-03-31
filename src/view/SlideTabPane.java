@@ -7,9 +7,9 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 
 public class SlideTabPane extends TabPane {
-	Tab openTab;
-	Node innerNode;
-	boolean isOpen;
+	private final Tab openTab;
+	private Node innerNode;
+	private boolean isOpen;
 
 	public SlideTabPane() {
 		openTab = new Tab();

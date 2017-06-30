@@ -1,34 +1,24 @@
 package model;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.FloatControl;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import javafx.beans.value.ChangeListener;
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 
 public class AudioPlayer implements Runnable {
 
 	private Thread thread;
-	private Playback playback;
 	private final AudioDAO audioDAO;
-	private FloatControl volume;
 	private final ChangeListener<Number> volumeChangeListener;
-	//	private AudioPlayingListener audioPlayingListener;
-//	private VolumeListener volumeListener;
-	private volatile boolean bForceStop = false;
+    private CustomAudioDevice customAudioDevice;
+	private Player player;
 
 	public AudioPlayer(AudioDAO audioDAO) {
 		this.audioDAO = audioDAO;
 		volumeChangeListener = (observable, oldValue, newValue) -> {
-            if (volume != null) {
-                volume.setValue(newValue.floatValue());
+            if (customAudioDevice != null) {
+                customAudioDevice.setVolume(newValue.floatValue());
             }
         };
 		audioDAO.start();
@@ -36,7 +26,6 @@ public class AudioPlayer implements Runnable {
 
 	public void start() {
 		if (thread == null) {
-			bForceStop = false;
 			thread = new Thread(this);
 			thread.setName("Audio-Player");
 			thread.start();
@@ -54,8 +43,16 @@ public class AudioPlayer implements Runnable {
 					}
 				}
 				System.out.println("Playing");
-				playback = new Playback();
-				playback.start();
+                float oldVolume = (customAudioDevice != null ? customAudioDevice.getVolume() : 0.0f);
+                customAudioDevice = new CustomAudioDevice();
+                customAudioDevice.setVolume(oldVolume);
+                try {
+                    player = new Player(new ByteArrayInputStream(audioDAO.getAudioBuffer()), customAudioDevice);
+					player.play();
+					player = null;
+				} catch (JavaLayerException e) {
+					e.printStackTrace();
+				}
 				audioDAO.stopPlaying();
 			}
 		} catch (InterruptedException e) {
@@ -64,10 +61,9 @@ public class AudioPlayer implements Runnable {
 	}
 
 	public void stop() {
-		if (playback != null) {
-			System.out.println("Force stopping Playback");
-			forceStop();
-		}
+        if (player != null) {
+            player.close();
+        }
 		if (thread != null) {
 			System.out.println("Stopping " + thread.getName() + " Thread");
 			thread.interrupt();
@@ -75,75 +71,7 @@ public class AudioPlayer implements Runnable {
 		}
 	}
 
-//	public void setAudioPlayingListener(AudioPlayingListener audioPlayingListener) {
-//		this.audioPlayingListener = audioPlayingListener;
-//	}
-
-	private void forceStop() {
-		bForceStop = true;
-	}
-
 	public ChangeListener<Number> getVolumeChangeListener() {
 		return volumeChangeListener;
-	}
-
-	class Playback {
-
-		private void start() {
-			try {
-				AudioInputStream audioInStream = AudioSystem.getAudioInputStream(new ByteArrayInputStream(audioDAO.getAudioBuffer()));
-				AudioFormat format = audioInStream.getFormat();
-				format = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, format.getSampleRate(),
-						16, format.getChannels(), format.getChannels() * 2, format.getSampleRate(), false);
-				audioInStream = AudioSystem.getAudioInputStream(format, audioInStream);
-				// getLine
-				SourceDataLine line = AudioSystem.getSourceDataLine(format);
-				line.open(format);
-				System.out.println("Opened line with buffer size " + line.getBufferSize());
-				float oldVolume = (volume != null ? volume.getValue() : 0.0f);
-				volume = (FloatControl) line.getControl(FloatControl.Type.MASTER_GAIN);
-				volume.setValue(oldVolume);
-//				volumeListener = new VolumeListener() {
-//
-//					@Override
-//					public void volumeChanged(VolumeEvent ev) {
-//						volume.setValue(ev.getVolumeChange());
-//
-//					}
-//				};
-//				if (audioPlayingListener != null) {
-//					AudioPlayingEvent ev = new AudioPlayingEvent(this, volumeListener);
-//					audioPlayingListener.AudioOn(ev);
-//				}
-
-				// rawplay
-				byte[] buffer = new byte[256];
-
-				if (line != null) {
-					// Start
-					line.start();
-					int nBytesRead = 0;
-					System.out.println("Start rawplay loop");
-					while (!bForceStop && nBytesRead != -1) {
-						nBytesRead = audioInStream.read(buffer);
-						if (nBytesRead != -1) {
-							line.write(buffer, 0, nBytesRead);
-						} else {
-							System.out.println("-1!! No line write");
-						}
-					}
-					// Stop
-					System.out.println("End rawplay loop");
-					line.drain();
-					line.stop();
-					line.close();
-					audioInStream.close();
-				}
-				// end rawplay
-//				in.close();
-			} catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 }

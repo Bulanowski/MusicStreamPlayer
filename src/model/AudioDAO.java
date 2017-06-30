@@ -13,7 +13,6 @@ public class AudioDAO implements Runnable {
     private int size = 0;
     private int bytesRead = 0;
     private volatile boolean playing = false;
-    private volatile boolean gotSongInfo = false;
     private static final double BUFFER_PERCENTAGE = 0.05; // default = 0.05
 
     public AudioDAO(Distributor distributor) {
@@ -33,22 +32,15 @@ public class AudioDAO implements Runnable {
     public void run() {
         try {
             while (!thread.isInterrupted()) {
-                Object objectReceived;
-                if (!gotSongInfo) {
-                    objectReceived = distributor.getFromQueue(PackageType.SONG_INFO);
-                    if (objectReceived instanceof Pair) {
-                        Pair<Integer, Song> sizeAndSong = (Pair<Integer, Song>) objectReceived;
-                        resetVars(sizeAndSong.getKey());
-                        gotSongInfo = true;
-                    }
-                } else {
-                    objectReceived = distributor.getFromQueue(PackageType.AUDIO);
-                    if (objectReceived instanceof byte[]) {
-                        byte[] buffer = (byte[]) objectReceived;
-                        addToAudioBuffer(buffer);
-                        if (!playing && bytesRead >= (size * BUFFER_PERCENTAGE)) {
-                            startPlaying();
-                        }
+                Object objectReceived = distributor.getFromQueue(PackageType.SONG);
+                if (objectReceived instanceof Pair) {
+                    Pair<Integer, Song> sizeAndSong = (Pair<Integer, Song>) objectReceived;
+                    resetVars(sizeAndSong.getKey());
+                } else if (objectReceived instanceof byte[]) {
+                    byte[] buffer = (byte[]) objectReceived;
+                    addToAudioBuffer(buffer);
+                    if (!playing && bytesRead >= (size * BUFFER_PERCENTAGE)) {
+                        startPlaying();
                     }
                 }
             }
@@ -95,7 +87,6 @@ public class AudioDAO implements Runnable {
     public void stopPlaying() {
         System.out.println("Stop playing");
         playing = false;
-        gotSongInfo = false;
         try {
             distributor.addToQueue(PackageType.COMMAND.getByte(), "songEnd");
         } catch (InterruptedException e) {

@@ -43,8 +43,14 @@ public class StatusView {
 	}
 
 	public void setSongInfo(String artistName, String songName) {
-		statusBar.getChildren().clear();
-		statusBar.getChildren().addAll(new Label(artistName), new Label(songName), volumeSlider);
+		if(!artistName.isEmpty() && !songName.isEmpty()) {
+			statusBar.getChildren().clear();
+			statusBar.getChildren().addAll(new Text(artistName+" - "+songName.trim()), volumeSlider);
+		} else {
+			resetStatusBar();
+		}
+
+
 	}
 
 	private void resetStatusBar() {

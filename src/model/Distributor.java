@@ -21,4 +21,9 @@ public class Distributor {
 		return queueList.get(packageType.getByte()).take();
 	}
 
+	public boolean isEmpty(byte packageType) {
+		System.out.println(queueList.get(packageType).isEmpty());
+		return queueList.get(packageType).isEmpty();
+
+	}
 }

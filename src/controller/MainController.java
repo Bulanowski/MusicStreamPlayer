@@ -42,7 +42,10 @@ public class MainController {
 		menuCtrl = new MenuController(primaryView, treeCtrl, tableCtrl, commandCtrl, chatBoxCtrl, tcp,
 				songModel, chatModel, audioPlayer);
 
+		statusCtrl.addSongInfoChangeListener(audioDAO.getSongInfo());
+
 		statusCtrl.addVolumeListener(audioPlayer.getVolumeChangeListener());
+
 		tableCtrl.addSongModelListChangeListener(songModel);
 		treeCtrl.addSongModelListChangeListener(songModel);
 		statusCtrl.addSongModelListChangeListener(songModel);

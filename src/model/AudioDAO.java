@@ -2,12 +2,15 @@ package model;
 
 import java.nio.ByteBuffer;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.util.Pair;
 
 public class AudioDAO implements Runnable {
 
     private Thread thread;
     private final Distributor distributor;
+    private Pair<SimpleStringProperty, SimpleStringProperty> songInfo;
     private ByteBuffer byteBuffer;
     private byte[] audioBuffer;
     private int size = 0;
@@ -17,6 +20,11 @@ public class AudioDAO implements Runnable {
 
     public AudioDAO(Distributor distributor) {
         this.distributor = distributor;
+        songInfo = new Pair(new SimpleStringProperty(),new SimpleStringProperty());
+    }
+
+    public Pair getSongInfo() {
+        return songInfo;
     }
 
     public void start() {
@@ -35,6 +43,8 @@ public class AudioDAO implements Runnable {
                 Object objectReceived = distributor.getFromQueue(PackageType.SONG);
                 if (objectReceived instanceof Pair) {
                     Pair<Integer, Song> sizeAndSong = (Pair<Integer, Song>) objectReceived;
+                    songInfo.getKey().set(sizeAndSong.getValue().getArtist());
+                    songInfo.getValue().set(sizeAndSong.getValue().getName());
                     resetVars(sizeAndSong.getKey());
                 } else if (objectReceived instanceof byte[]) {
                     byte[] buffer = (byte[]) objectReceived;
@@ -82,6 +92,7 @@ public class AudioDAO implements Runnable {
         System.out.println("Start playing");
         playing = true;
         notifyAll();
+        songInfo.getValue().set(songInfo.getValue().getValue()+" ");
     }
 
     public void stopPlaying() {
@@ -89,6 +100,11 @@ public class AudioDAO implements Runnable {
         playing = false;
         try {
             distributor.addToQueue(PackageType.COMMAND.getByte(), "songEnd");
+            if(distributor.isEmpty(PackageType.SONG.getByte())) {
+                System.out.println("EMPTY");
+                songInfo.getKey().set("");
+                songInfo.getValue().set("");
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
  */
 public class CustomAudioDevice extends JavaSoundAudioDevice {
     private FloatControl volume;
-    private final int bufferSize = 2500;
+    private final int bufferSize = 44100;
 
     protected void createSource() throws JavaLayerException {
         try {

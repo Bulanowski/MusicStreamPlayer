@@ -13,13 +13,16 @@ public class AudioPlayer implements Runnable {
 	private final ChangeListener<Number> volumeChangeListener;
     private CustomAudioDevice customAudioDevice;
 	private Player player;
+	float oldVolume;
 
 	public AudioPlayer(AudioDAO audioDAO) {
 		this.audioDAO = audioDAO;
 		volumeChangeListener = (observable, oldValue, newValue) -> {
             if (customAudioDevice != null) {
-                customAudioDevice.setVolume(newValue.floatValue());
-            }
+                customAudioDevice.setVolume(oldValue.floatValue());
+            } else {
+            	oldVolume = oldValue.floatValue();
+			}
         };
 		audioDAO.start();
 	}
@@ -43,7 +46,7 @@ public class AudioPlayer implements Runnable {
 					}
 				}
 				System.out.println("Playing");
-                float oldVolume = (customAudioDevice != null ? customAudioDevice.getVolume() : 0.0f);
+//                float oldVolume = (customAudioDevice != null ? customAudioDevice.getVolume() : 0.0f);
                 customAudioDevice = new CustomAudioDevice();
                 customAudioDevice.setVolume(oldVolume);
                 try {

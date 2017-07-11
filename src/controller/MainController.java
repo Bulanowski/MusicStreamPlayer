@@ -10,6 +10,7 @@ public class MainController {
 	private final SongDAO songDAO;
 	private final AudioDAO audioDAO;
 	private final ChatDAO chatDAO;
+	private final QueueDAO queueDAO;
 	private final SongModel songModel;
 	private final ChatModel chatModel;
 	private final AudioPlayer audioPlayer;
@@ -29,6 +30,7 @@ public class MainController {
 		songDAO = new SongDAO(distributor);
 		audioDAO = new AudioDAO(distributor);
 		chatDAO = new ChatDAO(distributor);
+		queueDAO = new QueueDAO(distributor);
 		chatModel = new ChatModel(chatDAO);
 		songModel = new SongModel(songDAO);
 		audioPlayer = new AudioPlayer(audioDAO);
@@ -41,6 +43,8 @@ public class MainController {
 		chatBoxCtrl = new ChatController(commandCtrl);
 		menuCtrl = new MenuController(primaryView, treeCtrl, tableCtrl, commandCtrl, chatBoxCtrl, tcp,
 				songModel, chatModel, audioPlayer);
+
+		queueDAO.addListener(slideCtrl.getListListener());
 
 		statusCtrl.addSongInfoChangeListener(audioDAO.getSongInfo());
 
@@ -56,6 +60,7 @@ public class MainController {
 		audioPlayer.stop();
 		tcp.disconnect();
 		commandCtrl.stop();
+		queueDAO.stop();
 		chatDAO.stop();
 		audioDAO.stop();
 		songDAO.stop();

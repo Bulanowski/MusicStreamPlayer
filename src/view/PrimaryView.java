@@ -12,7 +12,7 @@ public class PrimaryView {
 	public PrimaryView(Stage primaryStage) {
 		pane = new BorderPane();
 		primaryStage.setScene(new Scene(pane, 1000, 800));
-		primaryStage.setTitle("Teamspeak Music Player");
+		primaryStage.setTitle("Stream Music Player");
 		primaryStage.setMinHeight(200);
 		primaryStage.setMinWidth(400);
 		primaryStage.show();

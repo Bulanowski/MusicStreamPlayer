@@ -51,6 +51,7 @@ public class AudioPlayer implements Runnable {
                 customAudioDevice.setVolume(oldVolume);
                 try {
                     player = new Player(new ByteArrayInputStream(audioDAO.getAudioBuffer()), customAudioDevice);
+                    audioDAO.startTimer();
 					player.play();
 					player = null;
 				} catch (JavaLayerException e) {

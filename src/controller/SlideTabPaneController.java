@@ -23,7 +23,6 @@ class SlideTabPaneController {
 		slidePane.setContent(innerTabPane());
 
 		listener = change -> {
-		    System.out.println("Got list change!");
                 StringBuilder str = new StringBuilder();
                 for (Pair<Integer, Song> pair: (ObservableList<Pair<Integer,Song>>)change.getList()) {
                     str.append(pair.getValue().getName() +" - "+pair.getValue().getArtist()+"\n");
@@ -45,9 +44,9 @@ class SlideTabPaneController {
 		chatTab = new Tab("Chat");
 		queueTab = new Tab("Queue");
 		chatTab.setClosable(false);
-		chatTab.setContent(new Label("Chat Tab"));
+		chatTab.setContent(new Label("Chat"));
 		queueTab.setClosable(false);
-		queueTab.setContent(new Text("Queue Tab"));
+		queueTab.setContent(new Text("Queue"));
 		inner.getTabs().addAll(chatTab, queueTab);
 		return inner;
 	}

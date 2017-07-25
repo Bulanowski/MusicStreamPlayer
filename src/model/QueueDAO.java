@@ -44,20 +44,8 @@ public class QueueDAO implements Runnable {
             while (!thread.isInterrupted()) {
                 Object objectReceived = distributor.getFromQueue(PackageType.SONG_QUEUE);
                 if(objectReceived instanceof ArrayList) {
-                    System.out.println("Got Song Queue from Server!");
-//                    LinkedHashMap<Integer,Song> songs = (LinkedHashMap<Integer, Song>) objectReceived;
                     songList.clear();
                     songList.addAll((ArrayList)objectReceived);
-                    System.out.println("Queue size: "+songList.size());
-//                    Iterator iterator = songs.entrySet().iterator();
-//                    System.out.println("Clearing song list...");
-//                    songList.clear();
-//                    while (iterator.hasNext()) {
-//                        Map.Entry entry = (Map.Entry) iterator.next();
-//
-//                        songList.add(new Pair<>((Integer)entry.getKey(),(Song)entry.getValue()));
-//                    }
-//                    System.out.println("New song list size: "+songList.size());
                 }
 
             }

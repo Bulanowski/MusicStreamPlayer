@@ -4,6 +4,7 @@ import javafx.stage.Stage;
 import model.*;
 import view.PrimaryView;
 
+
 public class MainController {
 	private final PrimaryView primaryView;
 	private final TCP tcp;
@@ -45,15 +46,20 @@ public class MainController {
 				songModel, chatModel, audioPlayer);
 
 		queueDAO.addListener(slideCtrl.getListListener());
+        queueDAO.addListener(statusCtrl.getListListener());
 
 		statusCtrl.addSongInfoChangeListener(audioDAO.getSongInfo());
-
+		statusCtrl.addTrackPosition(audioDAO.getTrackLengthAndPosition());
 		statusCtrl.addVolumeListener(audioPlayer.getVolumeChangeListener());
 
 		tableCtrl.addSongModelListChangeListener(songModel);
 		treeCtrl.addSongModelListChangeListener(songModel);
 		statusCtrl.addSongModelListChangeListener(songModel);
 		chatBoxCtrl.addChatModelChangedListener(chatModel);
+
+//		primaryView.removeAll();
+
+
 	}
 
 	public void onApplicationClosed() {

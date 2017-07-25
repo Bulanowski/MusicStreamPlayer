@@ -5,72 +5,80 @@ import java.util.Comparator;
 
 public class Song implements Serializable, Comparable<Song>, Comparator<Song> {
 
-	private static final long serialVersionUID = 4898115281270251697L;
+    private static final long serialVersionUID = 4898115281270251697L;
 
-	private final String path;
-	private String name;
-	private String album;
-	private String artist;
-	private int trackNumber;
-	private int id;
+    private final String path;
+    private String name;
+    private String album;
+    private String artist;
+    private int trackNumber;
+    private int id;
+    private int trackLength;
 
-	public Song(String path, int trackNumber) {
-		this.path = path;
-		this.trackNumber = trackNumber;
-	}
-	
-	public void setID(int id) {
-		this.id = id;
-	}
-	
-	public int getID() {
-		return id;
-	}
+    public Song(String path, int trackNumber) {
+        this.path = path;
+        this.trackNumber = trackNumber;
+    }
 
-	public String getPath() {
-		return path;
-	}
+    public void setID(int id) {
+        this.id = id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public int getID() {
+        return id;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getPath() {
+        return path;
+    }
 
-	public String getAlbum() {
-		return album;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setAlbum(String album) {
-		this.album = album;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getArtist() {
-		return artist;
-	}
+    public String getAlbum() {
+        return album;
+    }
 
-	public void setArtist(String artist) {
-		this.artist = artist;
-	}
+    public void setAlbum(String album) {
+        this.album = album;
+    }
 
-	private int getTrackNumber() {
-		return trackNumber;
-	}
+    public String getArtist() {
+        return artist;
+    }
 
-	public void setTrackNumber(int trackNumber) {
-		this.trackNumber = trackNumber;
-	}
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
 
-	@Override
-	public int compareTo(Song s) {
-		return trackNumber - s.getTrackNumber();
-	}
+    public int getTrackNumber() {
+        return trackNumber;
+    }
 
-	@Override
-	public int compare(Song s1, Song s2) {
-		return s1.getTrackNumber() - s2.getTrackNumber();
-	}
+    public void setTrackNumber(int trackNumber) {
+        this.trackNumber = trackNumber;
+    }
+
+    public int getTrackLength() {return trackLength; }
+
+    public String getTrackLengthFormatted() { return trackLength/60+":"+((trackLength%60 < 10)?"0"+trackLength%60:trackLength%60);}
+
+    public void setTrackLength(int trackLength) {this.trackLength = trackLength;}
+
+
+    @Override
+    public int compareTo(Song s) {
+        return trackNumber - s.getTrackNumber();
+    }
+
+    @Override
+    public int compare(Song s1, Song s2) {
+        return s1.getTrackNumber() - s2.getTrackNumber();
+    }
 
 }

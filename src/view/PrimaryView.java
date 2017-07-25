@@ -41,4 +41,6 @@ public class PrimaryView {
 	public void setTop(Node top) {
 		pane.setTop(top);
 	}
+
+	public void removeAll() { pane.getChildren().clear(); }
 }

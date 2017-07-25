@@ -30,9 +30,11 @@ class TableController {
         artist.setCellValueFactory(new PropertyValueFactory<>("artist"));
         TableColumn<Song, String> album = new TableColumn<>("Album");
         album.setCellValueFactory(new PropertyValueFactory<>("album"));
+        TableColumn<Song, String> length = new TableColumn<>("Length");
+        length.setCellValueFactory(new PropertyValueFactory<>("trackLengthFormatted"));
 
         //noinspection unchecked
-        table.getColumns().addAll(name, artist, album);
+        table.getColumns().addAll(name, artist, album,length);
 
         table.setRowFactory(tableView -> {
             final TableRow<Song> row = new TableRow<>();
@@ -51,9 +53,10 @@ class TableController {
             return row;
         });
 
-        name.prefWidthProperty().bind(table.widthProperty().divide(3));
-        artist.prefWidthProperty().bind(table.widthProperty().divide(3));
-        album.prefWidthProperty().bind(table.widthProperty().divide(3));
+        name.prefWidthProperty().bind(table.widthProperty().divide(4));
+        artist.prefWidthProperty().bind(table.widthProperty().divide(4));
+        album.prefWidthProperty().bind(table.widthProperty().divide(4));
+        length.prefWidthProperty().bind(table.widthProperty().divide(4));
 
         primaryView.setCenter(table);
     }

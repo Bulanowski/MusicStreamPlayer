@@ -84,7 +84,7 @@ public class AudioDAO implements Runnable {
                         e.printStackTrace();
                     }
                 }
-                System.out.println("ending timer ");
+                System.out.println("ending timer");
                 trackLengthAndPosition.getKey().set(-1);
             };
         if(timer == null) {

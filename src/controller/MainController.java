@@ -2,6 +2,7 @@ package controller;
 
 import javafx.stage.Stage;
 import model.*;
+import view.ConnectView;
 import view.PrimaryView;
 
 
@@ -51,13 +52,16 @@ public class MainController {
 		statusCtrl.addSongInfoChangeListener(audioDAO.getSongInfo());
 		statusCtrl.addTrackPosition(audioDAO.getTrackLengthAndPosition());
 		statusCtrl.addVolumeListener(audioPlayer.getVolumeChangeListener());
+		statusCtrl.setSkipListener(audioPlayer.getSkipListener());
 
 		tableCtrl.addSongModelListChangeListener(songModel);
 		treeCtrl.addSongModelListChangeListener(songModel);
 		statusCtrl.addSongModelListChangeListener(songModel);
 		chatBoxCtrl.addChatModelChangedListener(chatModel);
 
-//		primaryView.removeAll();
+		primaryView.removeAll();
+
+        ConnectView view = new ConnectView(primaryView);
 
 
 	}

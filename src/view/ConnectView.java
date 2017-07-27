@@ -9,15 +9,18 @@ import javafx.scene.layout.VBox;
 /**
  * Created by phil on 7/14/17.
  */
-public class connectView {
+public class ConnectView {
     VBox center = new VBox();
 
-    public void ConnectView(PrimaryView primaryView) {
+    public ConnectView(PrimaryView primaryView) {
         center.setAlignment(Pos.CENTER);
         HBox enterNew = new HBox();
-        Label enter = new Label("Enter");
+        enterNew.setAlignment(Pos.CENTER);
+        Label enter = new Label("Enter IP address");
         TextField enterField = new TextField();
         enterNew.getChildren().addAll(enter,enterField);
+        center.getChildren().addAll(enterNew);
+        primaryView.setCenter(center);
 
     }
 }

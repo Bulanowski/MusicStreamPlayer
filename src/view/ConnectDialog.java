@@ -12,5 +12,6 @@ public class ConnectDialog extends TextInputDialog {
 		this.getDialogPane().setHeaderText("Enter the IP you wish to connect to.");
 		this.getDialogPane().setContentText("IP:");
 		this.getDialogPane().getButtonTypes().set(0, connectButtonType);
+//        this.getDialogPane().getStylesheets().add("CSS/main.css");
 	}
 }

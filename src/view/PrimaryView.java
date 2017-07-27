@@ -11,7 +11,8 @@ public class PrimaryView {
 
 	public PrimaryView(Stage primaryStage) {
 		pane = new BorderPane();
-		primaryStage.setScene(new Scene(pane, 1000, 800));
+		Scene scene = new Scene(pane, 1000, 800);
+		primaryStage.setScene(scene);
 		primaryStage.setTitle("Stream Music Player");
 		primaryStage.setMinHeight(200);
 		primaryStage.setMinWidth(400);

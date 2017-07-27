@@ -9,6 +9,7 @@ import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Slider;
@@ -27,10 +28,12 @@ public class StatusView {
 	private Text trackLengthText;
 	private final Slider volumeSlider;
 	private final ProgressBar progressBar;
+	private final Button skip;
 
 	public StatusView() {
 		statusBar = new VBox(10);
 		volumeSlider = new Slider();
+		skip = new Button(">");
 		progressBar = new ProgressBar();
 		currentPosition = new Text();
 		trackLengthText = new Text();
@@ -44,6 +47,10 @@ public class StatusView {
 
 	}
 
+	public void setSkipListener(ChangeListener<Boolean> listener) {
+	     skip.armedProperty().addListener(listener);
+    }
+
 	public void setSongCount(int size) {
 		numberOfItems = new Text(size + " songs");
 		resetStatusBar();
@@ -54,7 +61,7 @@ public class StatusView {
         HBox progress = new HBox(10);
         progress.setAlignment(Pos.CENTER);
         progress.getChildren().addAll(currentPosition,progressBar,trackLengthText);
-        statusBar.getChildren().addAll(songInfo, progress,volumeSlider);
+        statusBar.getChildren().addAll(songInfo, progress,volumeSlider,skip);
     }
 
 	public void setTrackLength(long currentTime, int trackLength) {

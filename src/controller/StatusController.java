@@ -37,6 +37,10 @@ class StatusController {
 		sv.addVolumeListener(listener);
 	}
 
+	public void setSkipListener(ChangeListener<Boolean> listener) {
+	    sv.setSkipListener(listener);
+    }
+
 	public ListChangeListener getListListener() {
 	    /*TODO: Fix resetting status bar, as of right now checking
 	    if the queue list is empty is not a good way to see if its

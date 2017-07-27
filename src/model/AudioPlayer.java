@@ -3,6 +3,7 @@ package model;
 import java.io.ByteArrayInputStream;
 
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 
@@ -11,6 +12,7 @@ public class AudioPlayer implements Runnable {
 	private Thread thread;
 	private final AudioDAO audioDAO;
 	private final ChangeListener<Number> volumeChangeListener;
+	private final ChangeListener<Boolean> skipListener;
     private CustomAudioDevice customAudioDevice;
 	private Player player;
 	float oldVolume;
@@ -24,6 +26,13 @@ public class AudioPlayer implements Runnable {
             	oldVolume = oldValue.floatValue();
 			}
         };
+
+        skipListener = (observableValue,oldVal,newVal) -> {
+            if(newVal) {
+                stop();
+            }
+        };
+
 		audioDAO.start();
 	}
 
@@ -78,4 +87,6 @@ public class AudioPlayer implements Runnable {
 	public ChangeListener<Number> getVolumeChangeListener() {
 		return volumeChangeListener;
 	}
+
+    public ChangeListener<Boolean> getSkipListener() { return skipListener; }
 }

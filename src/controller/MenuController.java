@@ -72,7 +72,7 @@ class MenuController {
             if (tcp.isConnected()) {
                 chatBoxCtrl.show();
             } else {
-                Alert alert = new Alert(AlertType.ERROR, "Unable to open chat while disconnected.", ButtonType.OK);
+                Alert alert = new Alert(AlertType.ERROR, "Unable to open chat while not connected.", ButtonType.OK);
                 alert.showAndWait();
             }
         });

@@ -1,0 +1,30 @@
+.root{
+    -fx-font-family: "Courier New";
+    -fx-base: rgb(41, 41, 40);
+    -fx-background: rgb(41, 41, 40);
+    -fx-focus-color: rgba(255, 0, 0, 0);
+    -fx-faint-focus-color: rgba(255, 0, 0, 0);
+}
+
+.tree-cell:hover, .button:hover, .menu-item:hover, .cell:hover {
+    -fx-background-color: #8e5600;
+}
+
+
+.tree-cell,.cell,.table-view {
+    -fx-background-color: rgb(71, 71, 70);
+}
+
+/*.table-view:selected, .tree-view:selected {*/
+    /*-fx-background-color: rgb(71, 71, 70);;*/
+    /*-fx-border-color: black;*/
+/*}*/
+
+/*.table-view:focused, .tree-view:focused {*/
+    /*-fx-background-color: rgb(71, 71, 70);;*/
+    /*-fx-border-color: black;*/
+/*}*/
+
+
+
+

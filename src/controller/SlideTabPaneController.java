@@ -19,7 +19,6 @@ class SlideTabPaneController {
 	
 	public SlideTabPaneController(PrimaryView primaryView) {
 		SlideTabPane slidePane = new SlideTabPane();
-		primaryView.setRight(slidePane);
 		slidePane.setContent(innerTabPane());
 
 		listener = change -> {

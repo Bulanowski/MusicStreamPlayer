@@ -14,12 +14,16 @@ import view.StatusView;
 
 class StatusController {
 	private final StatusView sv;
+	private final PrimaryView primaryView;
 
 	public StatusController(PrimaryView primaryView) {
+	    this.primaryView = primaryView;
 		sv = new StatusView();
-
-		primaryView.setBottom(sv.getNode());
 	}
+
+	public void setAsBottom() {
+	    primaryView.setBottom(sv.getNode());
+    }
 	
 	public void addSongModelListChangeListener(SongModel songModel) {
 		songModel.getSongs().addListener((ListChangeListener<Song>) change -> Platform.runLater(() -> sv.setSongCount(songModel.getSongs().size())));

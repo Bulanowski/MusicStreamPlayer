@@ -22,7 +22,6 @@ class TreeController {
 
 		TreeView<String> tree = new TreeView<>(rootNode);
 		tree.setCellFactory(treeView -> new CustomTreeCell(tblCtrl));
-		primaryView.setLeft(tree);
 		tree.prefWidthProperty().bind(primaryView.getLeftWidth());
 	}
 
@@ -62,6 +61,7 @@ class TreeController {
 		CustomTreeCell(TableController tblCtrl) {
 			this.tblCtrl = tblCtrl;
 		}
+
 
 		@Override
 		public void updateItem(String item, boolean empty) {

@@ -20,8 +20,10 @@ import view.PrimaryView;
 class TableController {
     private ObservableList<Song> songList;
     private final TableView<Song> table;
+    private final PrimaryView primaryView;
 
     TableController(PrimaryView primaryView, CommandSender commandCtrl) {
+        this.primaryView = primaryView;
         table = new TableView<>();
         table.setPlaceholder(new Label("No media"));
         TableColumn<Song, String> name = new TableColumn<>("Name");
@@ -58,6 +60,9 @@ class TableController {
         album.prefWidthProperty().bind(table.widthProperty().divide(4));
         length.prefWidthProperty().bind(table.widthProperty().divide(4));
 
+    }
+
+    public void setAsCenter() {
         primaryView.setCenter(table);
     }
 

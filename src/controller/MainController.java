@@ -2,7 +2,6 @@ package controller;
 
 import javafx.stage.Stage;
 import model.*;
-import view.ConnectView;
 import view.PrimaryView;
 
 
@@ -23,6 +22,7 @@ public class MainController {
 	private final ChatController chatBoxCtrl;
 	private final MenuController menuCtrl;
 	private final SlideTabPaneController slideCtrl;
+	private final ConnectController connectCtrl;
 
 	public MainController(Stage primaryStage) {
 		primaryView = new PrimaryView(primaryStage);
@@ -43,7 +43,9 @@ public class MainController {
 		treeCtrl = new TreeController(primaryView, tableCtrl);
 		statusCtrl = new StatusController(primaryView);
 		chatBoxCtrl = new ChatController(commandCtrl);
-		menuCtrl = new MenuController(primaryView, treeCtrl, tableCtrl, commandCtrl, chatBoxCtrl, tcp,
+		connectCtrl = new ConnectController(primaryView,tcp,commandCtrl,audioPlayer, this);
+
+		menuCtrl = new MenuController(primaryView, this,treeCtrl, tableCtrl, commandCtrl, chatBoxCtrl, tcp,
 				songModel, chatModel, audioPlayer);
 
 		queueDAO.addListener(slideCtrl.getListListener());
@@ -59,12 +61,22 @@ public class MainController {
 		statusCtrl.addSongModelListChangeListener(songModel);
 		chatBoxCtrl.addChatModelChangedListener(chatModel);
 
-		primaryView.removeAll();
-
-        ConnectView view = new ConnectView(primaryView);
-
+        showConnectView();
 
 	}
+
+	public void showConnectView() {
+        primaryView.removeAll();
+        connectCtrl.setAsCenter();
+    }
+
+    public void showMainView() {
+        primaryView.removeAll();
+        menuCtrl.setAsTop();
+        tableCtrl.setAsCenter();
+        statusCtrl.setAsBottom();
+    }
+
 
 	public void onApplicationClosed() {
 		audioPlayer.stop();

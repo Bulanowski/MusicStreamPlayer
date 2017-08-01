@@ -15,40 +15,43 @@ import java.util.Random;
 class MenuController {
 
 	private final MenuView menuView;
+	private final PrimaryView primaryView;
 
-	MenuController(PrimaryView primaryView, TreeController treeCtrl, TableController tableCtrl,
+	MenuController(PrimaryView primaryView, MainController mainController,TreeController treeCtrl, TableController tableCtrl,
                    CommandSender commandCtrl, ChatController chatBoxCtrl, TCP tcp,
                    SongModel songModel, ChatModel chatModel, AudioPlayer audioPlayer) {
 
+	    this.primaryView = primaryView;
+
 		menuView = new MenuView();
 
-		menuView.setOnConnectClickEvent(event -> {
-
-            ConnectDialog connectDialog = new ConnectDialog();
-
-            Optional<String> connectResult = connectDialog.showAndWait();
-            connectResult.ifPresent(consumer -> {
-                try {
-                    int PORT = 53308;
-                    if (tcp.connect(connectResult.get(), PORT)) {
-                        tcp.start();
-                        commandCtrl.requestSongs();
-                        UsernameDialog usernameDialog = new UsernameDialog();
-                        Optional<String> usernameResult = usernameDialog.showAndWait();
-                        if (usernameResult.isPresent()) {
-                            commandCtrl.username(usernameResult.get());
-                        } else {
-                            Random rand = new Random();
-                            commandCtrl.username("guest" + (100000 + rand.nextInt(899999)));
-                        }
-                        audioPlayer.start();
-                        menuView.swapConnect();
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            });
-        });
+//		menuView.setOnConnectClickEvent(event -> {
+//
+//            ConnectDialog connectDialog = new ConnectDialog();
+//
+//            Optional<String> connectResult = connectDialog.showAndWait();
+//            connectResult.ifPresent(consumer -> {
+//                try {
+//                    int PORT = 53308;
+//                    if (tcp.connect(connectResult.get(), PORT)) {
+//                        tcp.start();
+//                        commandCtrl.requestSongs();
+//                        UsernameDialog usernameDialog = new UsernameDialog();
+//                        Optional<String> usernameResult = usernameDialog.showAndWait();
+//                        if (usernameResult.isPresent()) {
+//                            commandCtrl.username(usernameResult.get());
+//                        } else {
+//                            Random rand = new Random();
+//                            commandCtrl.username("guest" + (100000 + rand.nextInt(899999)));
+//                        }
+//                        audioPlayer.start();
+//                        menuView.swapConnect();
+//                    }
+//                } catch (NullPointerException e) {
+//                    e.printStackTrace();
+//                }
+//            });
+//        });
 
 		menuView.setOnDisconnectClickEvent(event -> {
             Alert alert = new Alert(AlertType.CONFIRMATION, null, ButtonType.OK, ButtonType.CANCEL);
@@ -64,23 +67,28 @@ class MenuController {
                 treeCtrl.clear();
                 songModel.clear();
                 chatModel.clear();
-                menuView.swapConnect();
+                mainController.showConnectView();
+//                menuView.swapConnect();
             }
         });
 
-		menuView.setOnChatClickEvent(event -> {
-            if (tcp.isConnected()) {
-                chatBoxCtrl.show();
-            } else {
-                Alert alert = new Alert(AlertType.ERROR, "Unable to open chat while not connected.", ButtonType.OK);
-                alert.showAndWait();
-            }
-        });
+//		menuView.setOnChatClickEvent(event -> {
+//            if (tcp.isConnected()) {
+//                chatBoxCtrl.show();
+//            } else {
+//                Alert alert = new Alert(AlertType.ERROR, "Unable to open chat while not connected.", ButtonType.OK);
+//                alert.showAndWait();
+//            }
+//        });
 
 		menuView.addSearchChangedListener((observable, oldValue, newValue) -> tableCtrl.applyFilter(newValue, TableFilter.ALL));
 
 		primaryView.setTop(menuView.getNode());
 
 	}
+
+	public void setAsTop() {
+	    primaryView.setTop(menuView.getNode());
+    }
 
 }

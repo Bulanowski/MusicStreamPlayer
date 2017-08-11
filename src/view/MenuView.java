@@ -50,6 +50,7 @@ public class MenuView {
 		Menu search = new Menu();
 		searchField = new TextField();
 		search.setGraphic(searchField);
+		searchField.setPromptText("Search");
 		search.setStyle("-fx-background-color: transparent;");
 		searchBar.getMenus().add(search);
 

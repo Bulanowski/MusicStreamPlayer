@@ -48,6 +48,10 @@ public class PrimaryView {
         pane.setCenter(stackPane);
     }
 
+    public void remove(Node node) {
+	    stackPane.getChildren().remove(node);
+    }
+
 	public void setBottom(Node bottom) {
 		pane.setBottom(bottom);
 	}

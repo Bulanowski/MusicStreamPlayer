@@ -61,13 +61,25 @@
     -fx-background-color: #9b5e00;
 }
 
-.transparentButton, .transparentButton:hover {
+.transparentButton, .transparentButton:hover,.transparentButton:focused  {
     -fx-background-color: transparent;
+}
+
+.triangle {
+    -fx-background-color: rgba(255, 15, 0, 0.3);
+}
+
+.triangle:hover {
+    -fx-background-color: rgba(125, 117, 119, 0.71);
 }
 
 
 .text-field {
     -fx-min-width: 150px;
+}
+
+.tab-pane {
+    -fx-background-color: #5d5d5d;
 }
 
 

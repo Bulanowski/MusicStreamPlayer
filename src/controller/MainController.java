@@ -1,7 +1,5 @@
 package controller;
 
-import javafx.geometry.Pos;
-import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
 import model.*;
 import view.PrimaryView;
@@ -23,7 +21,7 @@ public class MainController {
 	private final StatusController statusCtrl;
 	private final ChatController chatBoxCtrl;
 	private final MenuController menuCtrl;
-	private final SlideTabPaneController slideCtrl;
+	private final TabViewController tabCtrl;
 	private final ConnectController connectCtrl;
 
 	public MainController(Stage primaryStage) {
@@ -40,7 +38,7 @@ public class MainController {
 		audioPlayer = new AudioPlayer(audioDAO);
 
 		commandCtrl = new CommandSender(tcp, distributor);
-		slideCtrl = new SlideTabPaneController(primaryView);
+		tabCtrl = new TabViewController(primaryView);
 		tableCtrl = new TableController(primaryView, commandCtrl);
 		treeCtrl = new TreeController(primaryView, tableCtrl);
 		statusCtrl = new StatusController(primaryView);
@@ -50,7 +48,7 @@ public class MainController {
 		menuCtrl = new MenuController(primaryView, this,treeCtrl, tableCtrl, commandCtrl, chatBoxCtrl, tcp,
 				songModel, chatModel, audioPlayer);
 
-		queueDAO.addListener(slideCtrl.getListListener());
+		queueDAO.addListener(tabCtrl.getListListener());
         queueDAO.addListener(statusCtrl.getListListener());
 
 		statusCtrl.addSongInfoChangeListener(audioDAO.getSongInfo());
@@ -63,7 +61,7 @@ public class MainController {
 		statusCtrl.addSongModelListChangeListener(songModel);
 		chatBoxCtrl.addChatModelChangedListener(chatModel);
 
-
+        tabCtrl.setChatContent(chatBoxCtrl.getChatBoxNode());
 
         showConnectView();
 
@@ -79,7 +77,7 @@ public class MainController {
         menuCtrl.setAsTop();
         tableCtrl.setAsCenter();
         statusCtrl.setAsBottom();
-        slideCtrl.setRight();
+        tabCtrl.setRight();
     }
 
 

@@ -13,18 +13,15 @@ import javafx.stage.Stage;
 
 public class ChatBoxView {
 	
-	private final Stage stage;
 	private final BorderPane pane;
 	private final TextArea chatArea;
 	private final TextField messageField;
 	private ChatSendListener chatSendListener;
 	
 	public ChatBoxView() {
-		stage = new Stage();
 		pane = new BorderPane();
 		
-		stage.setTitle("Chat Box");
-		
+
 		chatArea = new TextArea();
 		chatArea.setEditable(false);
 		pane.setCenter(chatArea);
@@ -46,8 +43,11 @@ public class ChatBoxView {
 		
 		pane.setBottom(messageBox);
 		
-		stage.setScene(new Scene(pane, pane.getPrefHeight(), pane.getPrefWidth()));
 	}
+
+	public BorderPane getNode() {
+	    return pane;
+    }
 
 	private void sendChat() {
 		ChatSendEvent event = new ChatSendEvent(this, messageField.getText());
@@ -65,12 +65,5 @@ public class ChatBoxView {
 		chatArea.appendText("\r\n" + messageText);
 	}
 	
-	public void show() {
-		if (stage.isShowing()) {
-			stage.centerOnScreen();
-			stage.requestFocus();
-		}
-		stage.show();
-	}
 
 }

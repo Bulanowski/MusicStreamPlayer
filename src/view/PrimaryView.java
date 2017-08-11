@@ -1,6 +1,7 @@
 package view;
 
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.ReadOnlyDoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -29,6 +30,8 @@ public class PrimaryView {
 	public DoubleBinding getLeftWidth() {
 		return pane.widthProperty().divide(5);
 	}
+
+	public ReadOnlyDoubleProperty getWidthProperty() { return pane.widthProperty(); }
 
 	public void setLeft(Node left) {
         stackPane.getChildren().add(left);

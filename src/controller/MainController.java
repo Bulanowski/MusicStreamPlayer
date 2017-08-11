@@ -1,5 +1,7 @@
 package controller;
 
+import javafx.geometry.Pos;
+import javafx.scene.control.TreeView;
 import javafx.stage.Stage;
 import model.*;
 import view.PrimaryView;
@@ -61,6 +63,8 @@ public class MainController {
 		statusCtrl.addSongModelListChangeListener(songModel);
 		chatBoxCtrl.addChatModelChangedListener(chatModel);
 
+
+
         showConnectView();
 
 	}
@@ -75,6 +79,7 @@ public class MainController {
         menuCtrl.setAsTop();
         tableCtrl.setAsCenter();
         statusCtrl.setAsBottom();
+        slideCtrl.setRight();
     }
 
 

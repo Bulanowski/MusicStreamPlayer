@@ -1,13 +1,17 @@
 package view;
 
 import javafx.beans.binding.DoubleBinding;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class PrimaryView {
 	private final BorderPane pane;
+	private final StackPane stackPane;
 
 	public PrimaryView(Stage primaryStage) {
 		pane = new BorderPane();
@@ -17,6 +21,9 @@ public class PrimaryView {
 		primaryStage.setMinHeight(200);
 		primaryStage.setMinWidth(400);
 		primaryStage.show();
+
+        stackPane = new StackPane();
+
 	}
 
 	public DoubleBinding getLeftWidth() {
@@ -24,16 +31,22 @@ public class PrimaryView {
 	}
 
 	public void setLeft(Node left) {
-		pane.setLeft(left);
+        stackPane.getChildren().add(left);
+        stackPane.setAlignment(left,Pos.CENTER_LEFT);
+        pane.setCenter(stackPane);
 	}
 
-	public void setCenter(Node center) {
-		pane.setCenter(center);
-	}
 
-	public void setRight(Node right) {
-		pane.setRight(right);
-	}
+    public void setCenter(Node center) {
+        stackPane.getChildren().add(center);
+        pane.setCenter(stackPane);
+    }
+
+    public void setRight(Node right) {
+        stackPane.getChildren().add(right);
+        stackPane.setAlignment(right,Pos.CENTER_RIGHT);
+        pane.setCenter(stackPane);
+    }
 
 	public void setBottom(Node bottom) {
 		pane.setBottom(bottom);

@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
@@ -14,10 +15,13 @@ import view.PrimaryView;
 import view.SlideTabPane;
 
 class SlideTabPaneController {
-        Tab queueTab;
-        ListChangeListener listener;
-	
+    private Tab queueTab;
+    private ListChangeListener listener;
+    private PrimaryView primaryView;
+    private Button slider;
+
 	public SlideTabPaneController(PrimaryView primaryView) {
+	    this.primaryView  = primaryView;
 		SlideTabPane slidePane = new SlideTabPane();
 		slidePane.setContent(innerTabPane());
 
@@ -28,6 +32,10 @@ class SlideTabPaneController {
                 }
                 setQueueTab(new Text(str.toString()));
         };
+
+        slider = new Button("<");
+        slider.getStyleClass().add("transparentButton");
+
 	}
 
 	public ListChangeListener getListListener() {
@@ -49,6 +57,10 @@ class SlideTabPaneController {
 		inner.getTabs().addAll(chatTab, queueTab);
 		return inner;
 	}
+
+	public void setRight() {
+	    primaryView.setRight(slider);
+    }
 
 	public void setQueueTab(Node node) {
 	    Platform.runLater(() -> queueTab.setContent(node));

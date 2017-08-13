@@ -1,6 +1,7 @@
 package model;
 
 import java.io.ByteArrayInputStream;
+import java.lang.reflect.Method;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -29,12 +30,21 @@ public class AudioPlayer implements Runnable {
 
         skipListener = (observableValue,oldVal,newVal) -> {
             if(newVal) {
-                stop();
+
             }
         };
 
 		audioDAO.start();
 	}
+
+	public Method getStopPlayerMethod() {
+        try {
+            return this.getClass().getMethod("stopPlayer");
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 	public void start() {
 		if (thread == null) {
@@ -72,6 +82,14 @@ public class AudioPlayer implements Runnable {
 //			System.err.println(thread.getName() + " was interrupted");
 		}
 	}
+
+	public void stopPlayer() {
+        if (player != null) {
+            player.close();
+        }
+        player = null;
+    }
+
 
 	public void stop() {
         if (player != null) {

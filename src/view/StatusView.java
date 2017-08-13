@@ -29,6 +29,7 @@ public class StatusView {
 	private final Slider volumeSlider;
 	private final ProgressBar progressBar;
 	private final Button skip;
+	private HBox progress;
 
 	public StatusView() {
 		statusBar = new VBox(10);
@@ -37,6 +38,8 @@ public class StatusView {
 		progressBar = new ProgressBar();
 		currentPosition = new Text();
 		trackLengthText = new Text();
+		progress = new HBox(10);
+        songInfo = new Text();
 		progressBar.setMaxHeight(5);
 		statusBar.setAlignment(Pos.CENTER);
 		statusBar.setPadding(new Insets(5, 5, 5, 5));
@@ -44,7 +47,6 @@ public class StatusView {
 		volumeSlider.setMax(6);
 		volumeSlider.setMaxWidth(200);
 		volumeSlider.setValue(0);
-
 	}
 
 	public void setSkipListener(ChangeListener<Boolean> listener) {
@@ -58,7 +60,7 @@ public class StatusView {
 
 	public void updateStatusBar() {
         statusBar.getChildren().clear();
-        HBox progress = new HBox(10);
+        progress.getChildren().clear();
         progress.setAlignment(Pos.CENTER);
         progress.getChildren().addAll(currentPosition,progressBar,trackLengthText);
         statusBar.getChildren().addAll(songInfo, progress,volumeSlider,skip);
@@ -76,10 +78,10 @@ public class StatusView {
 
 	public void setSongInfo(String artistName, String songName) {
 		if(!artistName.isEmpty() && !songName.isEmpty()) {
-		    songInfo = new Text(artistName+" - "+songName.trim());
+		    songInfo.setText(artistName+" - "+songName.trim());
 			updateStatusBar();
 		} else {
-			resetStatusBar();
+//			resetStatusBar();
 		}
 
 	}

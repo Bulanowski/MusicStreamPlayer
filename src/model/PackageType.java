@@ -12,4 +12,13 @@ public enum PackageType {
 	public byte getByte() {
 		return type;
 	}
+
+	public static PackageType getByByte(Byte b) {
+        for (PackageType type: values()) {
+            if(type.getByte() == b) {
+                return type;
+            }
+        }
+        return null;
+    }
 }

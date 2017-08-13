@@ -27,12 +27,10 @@ public class ConnectView  extends VBox {
     private TextField ipField;
     private TextField usernameField;
     private ObservableList<Pair<String, String>> savedAddresses;
-    private ListView oldConnections;
-    private EventHandler handler;
 
 
     public ConnectView(EventHandler handler) {
-        this.handler = handler;
+        EventHandler handler1 = handler;
         this.setSpacing(20);
         this.setAlignment(Pos.TOP_CENTER);
 
@@ -63,7 +61,7 @@ public class ConnectView  extends VBox {
         Label oldConnectionsTitle = new Label("Past Connections:");
         oldConnectionsTitle.setFont(Font.font(20));
         oldConnectionsTitle.setPadding(new Insets(40,0,0,0));
-        oldConnections = new ListView();
+        ListView oldConnections = new ListView();
 
         oldConnections.setPlaceholder(new Label("No Past Connections."));
 
@@ -81,7 +79,7 @@ public class ConnectView  extends VBox {
 
 
         center.getChildren().addAll(ipBox,usernameBox, connect);
-        this.getChildren().addAll(welcome,center, oldConnectionsTitle,oldConnections);
+        this.getChildren().addAll(welcome,center, oldConnectionsTitle, oldConnections);
     }
 
 
@@ -146,12 +144,21 @@ public class ConnectView  extends VBox {
         @Override
         public void updateItem(Pair<String,String> item, boolean empty) {
 
+            if(empty || item == null) {
+                setGraphic(null);
+                setText(null);
+                this.getStyleClass().add("transparentCell");
+
+            }
+
             super.updateItem(item, empty);
             Text username = new Text();
             Text ip = new Text();
             HBox buttons = new HBox(5);
-
             if (item != null) {
+
+                this.getStyleClass().remove("transparentCell");
+
                 username.setText(item.getValue());
                 ip.setText(item.getKey());
 

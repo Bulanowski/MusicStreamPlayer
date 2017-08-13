@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.util.Pair;
+import model.CommandSender;
 import model.Song;
 import model.SongModel;
 import view.PrimaryView;
@@ -15,10 +16,19 @@ import view.StatusView;
 class StatusController {
 	private final StatusView sv;
 	private final PrimaryView primaryView;
-
-	public StatusController(PrimaryView primaryView) {
+	private Pair<SimpleStringProperty,SimpleStringProperty> songInfo;
+	private boolean queueEmpty = false;
+	public StatusController(PrimaryView primaryView, CommandSender commandSender) {
 	    this.primaryView = primaryView;
 		sv = new StatusView();
+
+		sv.setSkipListener((one,two,three)-> {
+		    if(two) {
+                commandSender.voteToSkip();
+            }
+        });
+
+
 	}
 
 	public void setAsBottom() {
@@ -30,7 +40,16 @@ class StatusController {
 	}
 
 	public void addSongInfoChangeListener(Pair<SimpleStringProperty,SimpleStringProperty> info) {
-		info.getValue().addListener((one, two, three) -> Platform.runLater(() -> sv.setSongInfo(info.getKey().getValue(),info.getValue().getValue())));
+		info.getValue().addListener((one, two, three) -> Platform.runLater(() -> {
+		    songInfo = info;
+
+            songInfo.getKey().addListener((one1, two1, three1) -> {
+                if(songInfo.getKey().get().equals("") && queueEmpty) {
+                    Platform.runLater(() -> sv.resetStatusBar() );
+                }
+            });
+
+                sv.setSongInfo(info.getKey().getValue(),info.getValue().getValue());}));
 	}
 
     public void addTrackPosition(Pair<SimpleIntegerProperty,SimpleIntegerProperty> info) {
@@ -41,21 +60,15 @@ class StatusController {
 		sv.addVolumeListener(listener);
 	}
 
-	public void setSkipListener(ChangeListener<Boolean> listener) {
-	    sv.setSkipListener(listener);
-    }
-
 	public ListChangeListener getListListener() {
-	    /*TODO: Fix resetting status bar, as of right now checking
-	    if the queue list is empty is not a good way to see if its
-	    actually empty because it is emptied every time the list is changed.
-	     */
 	    ListChangeListener listener = change -> {
             if(change.getList().isEmpty()) {
-//                System.out.println("QUEUE IS EMPTY");
-                // Commented out because it doesnt work
-//                Platform.runLater(() -> sv.resetStatusBar() );
+                System.out.println("QUEUE IS EMPTY");
+                queueEmpty = true;
             }
+//            if(change.getList().isEmpty() && songInfo.getKey().get().equals("")) {
+//                Platform.runLater(() -> sv.resetStatusBar() );
+//            }
         };
 	    return listener;
     }

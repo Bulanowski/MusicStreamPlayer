@@ -20,7 +20,6 @@ public class ConnectController {
     private  CommandSender commandSender;
     private  AudioPlayer audioPlayer;
     private  MainController mainController;
-    private EventHandler<ConnectEvent> handler;
 
     public ConnectController(PrimaryView primaryView, TCP tcp, CommandSender commandSender, AudioPlayer audioPlayer, MainController mainController) {
 
@@ -30,17 +29,8 @@ public class ConnectController {
         this.commandSender = commandSender;
         this.mainController = mainController;
 
-        handler = event -> {
-            int PORT = 53308;
-            if (tcp.connect(event.ip, PORT)) {
-                    tcp.start();
-                    commandSender.requestSongs();
-                    commandSender.username(event.username);
-                    cv.addAddress(new Pair<>(event.ip, event.username));
-                    audioPlayer.start();
-                    saveList();
-                    mainController.showMainView();
-                }
+        EventHandler<ConnectEvent> handler = event -> {
+                connect(event.ip,event.username);
         };
 
         cv = new ConnectView(handler);
@@ -53,24 +43,27 @@ public class ConnectController {
 
         cv.setConnectButtonAction( actionEvent -> {
             try {
-                int PORT = 53308;
                 if(cv.getUsername() != null && cv.getIP() != null) {
-                    if (tcp.connect(cv.getIP(), PORT)) {
-                        tcp.start();
-                        commandSender.requestSongs();
-                        commandSender.username(cv.getUsername());
-//                    Random rand = new Random();
-//                    commandSender.username("guest" + (100000 + rand.nextInt(899999)));
-                        audioPlayer.start();
-                        cv.addAddress(new Pair<>(cv.getIP(), cv.getUsername()));
-                        saveList();
-                        mainController.showMainView();
-                    }
+                        connect(cv.getIP(),cv.getUsername());
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
         });
+    }
+
+    public void connect(String ip, String username) {
+        int PORT = 53308;
+        if (tcp.connect(ip, PORT)) {
+            tcp.start();
+            commandSender.requestSongs();
+            commandSender.username(username);
+            commandSender.requestQueue();
+            audioPlayer.start();
+            cv.addAddress(new Pair<>(ip, username));
+            saveList();
+            mainController.showMainView();
+        }
     }
 
     public void getAddressesFromFile() {

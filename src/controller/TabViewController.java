@@ -1,45 +1,34 @@
 package controller;
 
-import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
+import javafx.event.EventType;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Polygon;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 import javafx.util.Pair;
+import model.CommandSender;
 import model.Song;
 import view.PrimaryView;
+import view.QueueView;
 import view.TabView;
 
-class TabViewController {
+public class TabViewController {
     private ListChangeListener listener;
     private PrimaryView primaryView;
     private EventHandler<MouseEvent> show;
     private EventHandler<MouseEvent> hide;
     private TabView tabView;
+    private QueueView queueView;
 
-	public TabViewController(PrimaryView primaryView) {
+
+	public TabViewController(PrimaryView primaryView, CommandSender commandSender) {
 	    this.primaryView  = primaryView;
 		tabView = new TabView();
+		queueView = new QueueView();
 
-		listener = change -> {
-                StringBuilder str = new StringBuilder();
-                for (Pair<Integer, Song> pair: (ObservableList<Pair<Integer,Song>>)change.getList()) {
-                    str.append(pair.getValue().getName() +" - "+pair.getValue().getArtist()+"\n");
-                }
-            Platform.runLater(() -> tabView.setQueueTabContent(new Text(str.toString())));
-        };
-
+        tabView.setQueueTabContent(queueView.getListView());
 
         show = event -> {
             primaryView.remove(tabView.getArrow());
@@ -55,10 +44,28 @@ class TabViewController {
 
         tabView.setArrowAction(show);
 
+        EventHandler<RemoveEvent> handler = event -> {
+            commandSender.voteToRemove(event.key);
+        };
+
+
+        queueView.setRemoveOnAction(handler);
 	}
 
-	public ListChangeListener getListListener() {
-	    return listener;
+
+    public static class RemoveEvent extends Event {
+        int key;
+
+        public RemoveEvent(EventType<? extends Event> eventType, int key ) {
+            super(eventType);
+            this.key = key;
+
+        }
+    }
+
+
+    public void setListView(ObservableList<Pair<Integer,Song>> list) {
+	    queueView.setListView(list);
     }
 	
 	public void setRight() {

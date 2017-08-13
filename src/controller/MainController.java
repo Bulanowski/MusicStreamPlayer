@@ -30,31 +30,34 @@ public class MainController {
 		Distributor distributor = new Distributor();
 		tcp = new TCP(distributor);
 		songDAO = new SongDAO(distributor);
-		audioDAO = new AudioDAO(distributor);
+        queueDAO = new QueueDAO(distributor);
+		audioDAO = new AudioDAO(distributor,queueDAO);
 		chatDAO = new ChatDAO(distributor);
-		queueDAO = new QueueDAO(distributor);
 		chatModel = new ChatModel(chatDAO);
 		songModel = new SongModel(songDAO);
 		audioPlayer = new AudioPlayer(audioDAO);
 
-		commandCtrl = new CommandSender(tcp, distributor);
-		tabCtrl = new TabViewController(primaryView);
+		queueDAO.setAudioDAO(audioDAO);
+
+        audioDAO.setAudioPlayer(audioPlayer);
+
+        commandCtrl = new CommandSender(tcp, distributor);
+		tabCtrl = new TabViewController(primaryView,commandCtrl);
 		tableCtrl = new TableController(primaryView, commandCtrl);
 		treeCtrl = new TreeController(primaryView, tableCtrl);
-		statusCtrl = new StatusController(primaryView);
+		statusCtrl = new StatusController(primaryView,commandCtrl);
 		chatBoxCtrl = new ChatController(commandCtrl);
 		connectCtrl = new ConnectController(primaryView,tcp,commandCtrl,audioPlayer, this);
 
 		menuCtrl = new MenuController(primaryView, this,treeCtrl, tableCtrl, commandCtrl, chatBoxCtrl, tcp,
 				songModel, chatModel, audioPlayer);
 
-		queueDAO.addListener(tabCtrl.getListListener());
+		tabCtrl.setListView(queueDAO.getSongList());
         queueDAO.addListener(statusCtrl.getListListener());
 
 		statusCtrl.addSongInfoChangeListener(audioDAO.getSongInfo());
 		statusCtrl.addTrackPosition(audioDAO.getTrackLengthAndPosition());
 		statusCtrl.addVolumeListener(audioPlayer.getVolumeChangeListener());
-		statusCtrl.setSkipListener(audioPlayer.getSkipListener());
 
 		tableCtrl.addSongModelListChangeListener(songModel);
 		treeCtrl.addSongModelListChangeListener(songModel);

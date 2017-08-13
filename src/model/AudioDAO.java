@@ -1,5 +1,7 @@
 package model;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 
 import javafx.animation.KeyFrame;
@@ -21,11 +23,16 @@ public class AudioDAO implements Runnable {
     private int bytesRead = 0;
     private volatile boolean playing = false;
     private static final double BUFFER_PERCENTAGE = 0.05; // default = 0.05
+    private final QueueDAO queueDAO;
+    private AudioPlayer player;
+    private boolean skipped = false;
 
-    public AudioDAO(Distributor distributor) {
+    public AudioDAO(Distributor distributor,QueueDAO queueDAO) {
+        this.queueDAO = queueDAO;
         this.distributor = distributor;
         songInfo = new Pair(new SimpleStringProperty(),new SimpleStringProperty());
         trackLengthAndPosition = new Pair<>(new SimpleIntegerProperty(), new SimpleIntegerProperty());
+
 
 
     }
@@ -35,6 +42,10 @@ public class AudioDAO implements Runnable {
     }
 
     public Pair getTrackLengthAndPosition() {return trackLengthAndPosition; }
+
+    public void setAudioPlayer(AudioPlayer player) {
+        this.player = player;
+    }
 
 
     public void start() {
@@ -52,6 +63,7 @@ public class AudioDAO implements Runnable {
             while (!thread.isInterrupted()) {
                 Object objectReceived = distributor.getFromQueue(PackageType.SONG);
                 if (objectReceived instanceof Pair) {
+                    skipped = false;
                     Pair<Integer, Song> sizeAndSong = (Pair<Integer, Song>) objectReceived;
                     trackLengthAndPosition.getValue().set(sizeAndSong.getValue().getTrackLength());
                     trackLengthAndPosition.getKey().set(0);
@@ -63,6 +75,11 @@ public class AudioDAO implements Runnable {
                     addToAudioBuffer(buffer);
                     if (!playing && bytesRead >= (size * BUFFER_PERCENTAGE)) {
                         startPlaying();
+                    }
+                } else if (objectReceived instanceof String) {
+                    if(objectReceived.equals("stop")) {
+                        player.stopPlayer();
+                        skipped = true;
                     }
                 }
             }
@@ -136,10 +153,15 @@ public class AudioDAO implements Runnable {
     }
 
     public void stopPlaying() {
+        queueDAO.removeFirst();
+        songInfo.getKey().set("");
+        songInfo.getValue().set("");
         System.out.println("Stop playing");
         playing = false;
         try {
-            distributor.addToQueue(PackageType.COMMAND.getByte(), "songEnd");
+            if(!skipped) {
+                distributor.addToQueue(PackageType.COMMAND, "songEnd");
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

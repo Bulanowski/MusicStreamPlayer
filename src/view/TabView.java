@@ -53,10 +53,10 @@ public class TabView {
 
 
 
-        arrowLeft.setFill(Color.rgb(255, 252, 246, 0.302));
-        transparentRect.setOnMouseEntered( event -> arrowLeft.setFill(Color.rgb(255, 252, 246, 0.6275)));
+        arrowLeft.setFill(Color.rgb(255, 252, 246, 0.549));
+        transparentRect.setOnMouseEntered( event -> arrowLeft.setFill(Color.rgb(255, 252, 246, 0.7843)));
 
-        transparentRect.setOnMouseExited( event -> arrowLeft.setFill(Color.rgb(255, 252, 246, 0.302)));
+        transparentRect.setOnMouseExited( event -> arrowLeft.setFill(Color.rgb(255, 252, 246, 0.549)));
 
         sliderArrow = new Button();
 

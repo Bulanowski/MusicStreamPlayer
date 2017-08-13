@@ -13,17 +13,12 @@ public class Distributor {
 		}
 	}
 
-	public void addToQueue(byte packageType, Object object) throws InterruptedException {
-		queueList.get(packageType).put(object);
+	public void addToQueue(PackageType type, Object object) throws InterruptedException {
+		queueList.get(type.getByte()).put(object);
 	}
 
 	public Object getFromQueue(PackageType packageType) throws InterruptedException {
 		return queueList.get(packageType.getByte()).take();
 	}
 
-	public boolean isEmpty(byte packageType) {
-		System.out.println(queueList.get(packageType).isEmpty());
-		return queueList.get(packageType).isEmpty();
-
-	}
 }

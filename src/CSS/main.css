@@ -13,13 +13,16 @@
     -fx-selection-bar: #9b5e00;
 }
 
-
 .table-view {
     -fx-selection-bar:  #9b5e00;
 }
 
 .tree-cell:hover, .menu-item:hover, .list-cell:hover {
     -fx-background-color: rgb(74, 74, 73);
+}
+
+.transparentCell:hover,.transparentCell:selected,.transparentCell:focused, .transparentCell:empty {
+    -fx-background-color: #5d5d5d;
 }
 
 .button {

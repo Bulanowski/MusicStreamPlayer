@@ -1,5 +1,6 @@
 package model;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -14,6 +15,7 @@ public class QueueDAO implements Runnable {
 
     private Thread thread;
     private final Distributor distributor;
+    private AudioDAO audioDAO;
     private ObservableList<Pair<Integer,Song>> songList;
 
     public QueueDAO(Distributor distributor) {
@@ -22,12 +24,23 @@ public class QueueDAO implements Runnable {
         this.start();
     }
 
+    public void setAudioDAO(AudioDAO audioDAO) {
+        this.audioDAO = audioDAO;
+    }
+
+    public void removeFirst() {
+        if(songList.size() > 0) {
+            Platform.runLater(() -> songList.remove(0));
+        }
+    }
+
     public void addListener(ListChangeListener listener) {
         songList.addListener(listener);
     }
 
-
-
+    public ObservableList<Pair<Integer, Song>> getSongList() {
+        return songList;
+    }
 
     public void start() {
         if (thread == null) {
@@ -43,9 +56,27 @@ public class QueueDAO implements Runnable {
         try {
             while (!thread.isInterrupted()) {
                 Object objectReceived = distributor.getFromQueue(PackageType.SONG_QUEUE);
+                System.out.println(objectReceived.getClass());
                 if(objectReceived instanceof ArrayList) {
-                    songList.clear();
                     songList.addAll((ArrayList)objectReceived);
+                }
+                else if(objectReceived instanceof Pair) {
+                    boolean bool = (boolean)((Pair) objectReceived).getKey();
+                    Pair<Integer,Song> songPair = (Pair)((Pair) objectReceived).getValue();
+                 if(bool) {
+                     if(audioDAO.getPlaying()) {
+                         Platform.runLater(() ->  songList.add(songPair));
+                     }
+
+                 } else {
+                     for (Pair pair:songList) {
+                         if(pair.getKey() == songPair.getKey()) {
+                             Platform.runLater(() ->songList.remove(songPair));
+                         }
+                     }
+                 }
+                } else {
+                    System.err.println("Queue received "+objectReceived.getClass()+" instead of pair or array-list.");
                 }
 
             }

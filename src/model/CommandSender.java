@@ -28,6 +28,18 @@ public class CommandSender implements Runnable {
 		tcp.sendCommand("username "+ username);
 	}
 
+    public void requestQueue() {
+        tcp.sendCommand("request_queue");
+    }
+
+    public void voteToRemove(int key) {
+	    tcp.sendCommand("vote_to_remove "+key);
+    }
+
+    public void voteToSkip() {
+        tcp.sendCommand("vote_to_skip");
+    }
+
 	private void songEnd() {
 		tcp.sendCommand("song_end");
 	}
@@ -58,7 +70,7 @@ public class CommandSender implements Runnable {
 				}
 			}
 		} catch (InterruptedException e) {
-//			System.err.println(thread.getName() + " was interrupted");
+			System.err.println(thread.getName() + " was interrupted");
 		}
 	}
 

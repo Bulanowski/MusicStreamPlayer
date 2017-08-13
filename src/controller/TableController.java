@@ -11,6 +11,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
 import model.CommandSender;
 import model.Song;
 import model.SongModel;
@@ -25,6 +26,7 @@ class TableController {
     TableController(PrimaryView primaryView, CommandSender commandCtrl) {
         this.primaryView = primaryView;
         table = new TableView<>();
+        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         table.setPlaceholder(new Label("No media"));
         TableColumn<Song, String> name = new TableColumn<>("Name");
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -54,11 +56,6 @@ class TableController {
                     .otherwise((ContextMenu) null));
             return row;
         });
-
-        name.prefWidthProperty().bind(table.widthProperty().divide(4));
-        artist.prefWidthProperty().bind(table.widthProperty().divide(4));
-        album.prefWidthProperty().bind(table.widthProperty().divide(4));
-        length.prefWidthProperty().bind(table.widthProperty().divide(4));
 
     }
 
